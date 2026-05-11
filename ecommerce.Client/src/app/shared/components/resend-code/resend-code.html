@@ -1,0 +1,15 @@
+<p class="text-sm text-neutral-500 dark:text-slate-400">
+  {{ prompt() }}
+  @if (countdown() > 0) {
+    <span class="text-neutral-400 dark:text-slate-500 ms-1">Resend in {{ countdown() }}s</span>
+  } @else {
+    <button
+      type="button"
+      (click)="onResend()"
+      [disabled]="loading()"
+      class="font-semibold text-primary hover:underline ms-1 bg-transparent border-none cursor-pointer disabled:opacity-50"
+    >
+      {{ loading() ? 'Sending…' : 'Resend code' }}
+    </button>
+  }
+</p>

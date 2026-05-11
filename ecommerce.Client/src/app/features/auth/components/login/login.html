@@ -1,0 +1,75 @@
+<app-card>
+  <div class="mb-7">
+    <h2 class="text-2xl font-extrabold text-neutral-800 dark:text-slate-100">Welcome back</h2>
+    <p class="text-neutral-500 dark:text-slate-400 text-sm mt-1">Sign in to your GiftWave account</p>
+  </div>
+
+  <app-tab-switcher
+    class="mb-6"
+    [tabs]="loginTabs"
+    [activeTab]="loginMode()"
+    (tabChange)="setMode($any($event))"
+  />
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <div class="mb-4">
+      <app-form-field
+        [label]="loginMode() === 'email' ? 'Email address' : 'Phone number'"
+        [type]="loginMode() === 'email' ? 'email' : 'tel'"
+        [prefix]="loginMode() === 'phone' ? '+20' : ''"
+        [placeholder]="loginMode() === 'email' ? 'you@example.com' : '1012345678'"
+        [autocomplete]="loginMode() === 'email' ? 'username' : 'tel'"
+        [inputmode]="loginMode() === 'phone' ? 'numeric' : ''"
+        [control]="form.controls.identifier"
+        [required]="true"
+        [errorMessages]="{ pattern: 'Enter a valid Egyptian phone number.' }"
+      />
+    </div>
+
+    <div class="mb-2">
+      <app-password-input [control]="form.controls.password" [required]="true" />
+    </div>
+
+    <div class="flex items-center justify-between mb-6">
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" formControlName="rememberMe" class="w-4 h-4 rounded accent-primary" />
+        <span class="text-sm text-neutral-600 dark:text-slate-300">Remember me</span>
+      </label>
+      <a routerLink="/forgot-password" class="text-sm font-medium text-primary hover:underline">
+        Forgot password?
+      </a>
+    </div>
+
+    @if (failedAttempts() >= 3 && !isLocked()) {
+      <app-alert-banner
+        class="mb-4"
+        type="warning"
+        [message]="'Warning: ' + failedAttempts() + ' failed attempts. Account will lock after 5.'"
+      />
+    }
+
+    @if (isLocked()) {
+      <app-alert-banner
+        class="mb-4"
+        type="danger"
+        message="Too many failed attempts. Please wait 15 minutes before trying again."
+      />
+    }
+
+    <app-button
+      type="submit"
+      variant="primary"
+      [fullWidth]="true"
+      [loading]="loading()"
+      [disabled]="isLocked()"
+      loadingText="Signing in…"
+    >
+      Sign in
+    </app-button>
+  </form>
+
+  <p class="mt-5 text-center text-sm text-neutral-500 dark:text-slate-400">
+    Don't have an account?
+    <a routerLink="/register" class="font-semibold text-primary hover:underline ms-1">Create one</a>
+  </p>
+</app-card>

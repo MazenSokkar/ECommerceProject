@@ -1,0 +1,199 @@
+<app-card maxWidth="lg">
+  <div class="mb-6">
+    <h2 class="text-2xl font-extrabold text-neutral-800 dark:text-slate-100">Create your account</h2>
+    <p class="text-neutral-500 dark:text-slate-400 text-sm mt-1">Join GiftWave and start gifting</p>
+  </div>
+
+  <app-step-indicator class="mb-7" [steps]="registerSteps" [currentStep]="currentStep()" />
+
+  <form [formGroup]="form" novalidate>
+
+    <!-- STEP 1: Personal Info -->
+    @if (currentStep() === 1) {
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <app-form-field
+            label="First Name"
+            placeholder="Ahmed"
+            [control]="form.controls.firstName"
+            [required]="true"
+          />
+          <app-form-field
+            label="Last Name"
+            placeholder="Ali"
+            [control]="form.controls.lastName"
+            [required]="true"
+          />
+        </div>
+
+        <app-form-field
+          label="Email address"
+          type="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+          [control]="form.controls.email"
+          [required]="true"
+        />
+
+        <app-form-field
+          label="Phone number"
+          type="tel"
+          placeholder="1012345678"
+          prefix="+20"
+          autocomplete="tel"
+          [control]="form.controls.phone"
+          [required]="true"
+          [errorMessages]="{ pattern: 'Enter a valid Egyptian mobile number (e.g. 1012345678).' }"
+        />
+
+        <app-password-input
+          label="Password"
+          placeholder="Min. 8 characters"
+          autocomplete="new-password"
+          [showStrengthMeter]="true"
+          [control]="form.controls.password"
+          [required]="true"
+        />
+
+        <div>
+          <app-password-input
+            label="Confirm password"
+            placeholder="Re-enter password"
+            autocomplete="new-password"
+            [control]="form.controls.confirmPassword"
+            [required]="true"
+          />
+          @if (form.hasError('passwordMismatch') && form.controls.confirmPassword.touched) {
+            <p class="text-danger text-xs mt-1">Passwords do not match.</p>
+          }
+        </div>
+
+        <app-button
+          type="button"
+          variant="primary"
+          [fullWidth]="true"
+          class="mt-2"
+          (click)="goToStep2()"
+        >
+          Continue to Address
+          <i class="lni lni-chevron-right text-base"></i>
+        </app-button>
+      </div>
+    }
+
+    <!-- STEP 2: Address -->
+    @if (currentStep() === 2) {
+      <div class="space-y-4">
+        <app-form-field
+          label="Location name"
+          placeholder="e.g. Home, Office"
+          [control]="form.controls.locationName"
+          [required]="true"
+        />
+
+        <!-- Country -->
+        <div>
+          <label class="block text-sm font-medium text-neutral-700 dark:text-slate-200 mb-1.5" for="countryId">
+            Country <span class="text-danger">*</span>
+          </label>
+          <select
+            id="countryId"
+            formControlName="countryId"
+            class="form-input"
+            [class.form-input--error]="form.controls.countryId.invalid && form.controls.countryId.touched"
+            (change)="onCountryChange($event)"
+          >
+            <option [value]="null">Select country</option>
+            @for (c of countries(); track c.id) {
+              <option [value]="c.id">{{ c.nameEn }}</option>
+            }
+          </select>
+          @if (form.controls.countryId.invalid && form.controls.countryId.touched) {
+            <p class="text-danger text-xs mt-1">Please select a country.</p>
+          }
+        </div>
+
+        <!-- State/Province -->
+        <div>
+          <label class="block text-sm font-medium text-neutral-700 dark:text-slate-200 mb-1.5" for="stateProvinceId">
+            State / Province <span class="text-danger">*</span>
+          </label>
+          <select
+            id="stateProvinceId"
+            formControlName="stateProvinceId"
+            class="form-input"
+            [class.form-input--error]="form.controls.stateProvinceId.invalid && form.controls.stateProvinceId.touched"
+            [disabled]="!form.value.countryId || loadingStates()"
+            (change)="onStateChange($event)"
+          >
+            <option [value]="null">{{ loadingStates() ? 'Loading…' : 'Select state' }}</option>
+            @for (s of states(); track s.id) {
+              <option [value]="s.id">{{ s.nameEn }}</option>
+            }
+          </select>
+          @if (form.controls.stateProvinceId.invalid && form.controls.stateProvinceId.touched) {
+            <p class="text-danger text-xs mt-1">Please select a state.</p>
+          }
+        </div>
+
+        <!-- City -->
+        <div>
+          <label class="block text-sm font-medium text-neutral-700 dark:text-slate-200 mb-1.5" for="cityId">
+            City <span class="text-danger">*</span>
+          </label>
+          <select
+            id="cityId"
+            formControlName="cityId"
+            class="form-input"
+            [class.form-input--error]="form.controls.cityId.invalid && form.controls.cityId.touched"
+            [disabled]="!form.value.stateProvinceId || loadingCities()"
+          >
+            <option [value]="null">{{ loadingCities() ? 'Loading…' : 'Select city' }}</option>
+            @for (c of cities(); track c.id) {
+              <option [value]="c.id">{{ c.nameEn }}</option>
+            }
+          </select>
+          @if (form.controls.cityId.invalid && form.controls.cityId.touched) {
+            <p class="text-danger text-xs mt-1">Please select a city.</p>
+          }
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <app-form-field
+            label="Latitude"
+            placeholder="30.0444"
+            hint="(optional)"
+            [control]="form.controls.latitude"
+          />
+          <app-form-field
+            label="Longitude"
+            placeholder="31.2357"
+            hint="(optional)"
+            [control]="form.controls.longitude"
+          />
+        </div>
+
+        <div class="flex gap-3 mt-2">
+          <app-button variant="outline" [fullWidth]="true" type="button" (click)="goBack()">
+            Back
+          </app-button>
+          <app-button
+            variant="primary"
+            [fullWidth]="true"
+            type="button"
+            [loading]="loading()"
+            loadingText="Creating…"
+            (click)="onSubmit()"
+          >
+            Create account
+          </app-button>
+        </div>
+      </div>
+    }
+  </form>
+
+  <p class="mt-5 text-center text-sm text-neutral-500 dark:text-slate-400">
+    Already have an account?
+    <a routerLink="/login" class="font-semibold text-primary hover:underline ms-1">Sign in</a>
+  </p>
+</app-card>

@@ -1,0 +1,8 @@
+<button [type]="type()" [disabled]="isDisabled()" [class]="classes()">
+  @if (loading()) {
+    <i class="lni lni-reload animate-spin text-base"></i>
+    {{ loadingText() }}
+  } @else {
+    <ng-content />
+  }
+</button>

@@ -1,0 +1,127 @@
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.card {
+  width: 330px;
+  min-height: 80px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 10px 15px;
+  background-color: #ffffff;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  gap: 15px;
+  pointer-events: all;
+  animation: slide-in 0.3s ease forwards;
+}
+
+.card.exiting {
+  animation: slide-out 0.3s ease forwards;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+}
+
+.wave {
+  position: absolute;
+  transform: rotate(90deg);
+  left: -31px;
+  top: 32px;
+  width: 80px;
+  fill: var(--wave-color);
+}
+
+.icon-container {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--icon-bg);
+  border-radius: 50%;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.icon {
+  width: 17px;
+  height: 17px;
+  color: var(--icon-color);
+}
+
+.message-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.message-text,
+.sub-text {
+  margin: 0;
+  cursor: default;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.message-text {
+  color: var(--text-color);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.sub-text {
+  font-size: 14px;
+  color: #555;
+}
+
+.cross-icon {
+  width: 18px;
+  height: 18px;
+  color: #555;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.cross-icon:hover {
+  color: #111;
+}

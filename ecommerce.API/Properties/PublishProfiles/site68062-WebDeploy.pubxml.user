@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project>
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAUokUJNUp+k2gDFUI/uc8ZQAAAAACAAAAAAAQZgAAAAEAACAAAAC77es+A+W55pcZWmuzjhk6OzJYEVRn37ussBVYuRxXaAAAAAAOgAAAAAIAACAAAAANprKiJA4pZEc2/Rowgu9Qjgq4QiGWWU9vGzKS15QIKCAAAAAbCdM3n3Ztoc/Eywo+HnHSSh87wyzFaP+1tTWc32YG4kAAAADCpO5y1mvOLnb43GsOqLOunrR9oI2yY7N/939x3PMYS4j+4tohjT6e/wNUu/KOnPMXQPy2x4CQHP5XoHq1zkal</EncryptedPassword>
+    <History>True|2026-05-11T00:56:01.8864387Z||;True|2026-05-11T03:51:56.7637253+03:00||;True|2026-05-11T03:47:45.2222184+03:00||;True|2026-05-11T03:45:03.8376397+03:00||;True|2026-05-11T03:43:30.8538167+03:00||;True|2026-05-10T23:13:50.8228917+03:00||;True|2026-05-10T22:08:19.2299335+03:00||;True|2026-05-10T20:58:18.2315773+03:00||;True|2026-05-10T00:11:49.1824206+03:00||;False|2026-05-10T00:11:30.0004194+03:00||;False|2026-05-10T00:11:09.5831519+03:00||;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="DefaultConnection">
+      <Value>Server=tcp:db51515.public.databaseasp.net%3b Database=db51515%3b User Id=db51515%3b Password=6n#D=Mw5P8!m%3b Encrypt=False%3b MultipleActiveResultSets=True%3b</Value>
+    </DestinationConnectionStrings>
+    <DestinationConnectionStrings Include="Redis">
+      <Value>coherent-maggot-120684.upstash.io:6379,password=gQAAAAAAAddsAAIgcDI5YjBmZGRjNzI2ODM0NWEwYjczZDkxZmEwYmU3ZDQ1OA,ssl=True,abortConnect=False</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+</Project>

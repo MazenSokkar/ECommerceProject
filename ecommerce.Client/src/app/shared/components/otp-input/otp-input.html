@@ -1,0 +1,21 @@
+<div class="flex gap-3 justify-center" [class.shake]="shaking()">
+  @for (i of indices; track i) {
+    <input
+      #digit
+      type="text"
+      inputmode="numeric"
+      maxlength="1"
+      [value]="digits()[i]"
+      [class]="
+        'w-12 h-12 text-center text-xl font-bold rounded-xl border-2 outline-none transition-all duration-150 bg-white ' +
+        (hasError()
+          ? 'border-danger text-danger focus:border-danger'
+          : 'border-neutral-200 text-neutral-800 focus:border-primary')
+      "
+      [attr.aria-label]="'Digit ' + (i + 1) + ' of 6'"
+      (input)="onInput(i, $event)"
+      (keydown)="onKeydown(i, $event)"
+      (paste)="onPaste($event)"
+    />
+  }
+</div>

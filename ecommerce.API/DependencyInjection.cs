@@ -1,0 +1,124 @@
+using System.Reflection;
+using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using ecommerce.Contracts;
+using ecommerce.Core.Entities;
+using ecommerce.Core.IRepositories;
+using ecommerce.Core.IServices;
+using ecommerce.Infrastructure.Data;
+using ecommerce.Infrastructure.Options;
+using ecommerce.Infrastructure.Repositories;
+using ecommerce.Infrastructure.Services;
+using Mapster;
+using MapsterMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Serilog;
+
+namespace ecommerce.API;
+
+public static class DependencyInjection
+{
+    public static IServiceCollection AddApiDependencies(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddControllers();
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetConnectionString("Redis");
+        });
+
+        services
+            .AddCorsConfig()
+            .AddOpenApiConfig()
+            .AddEntitiesServicesDependencies(configuration)
+            .AddEntitiesRepositriesDependencies()
+            .AddMapsterConfig()
+            .AddSerilogConfig()
+            .AddFluentValidationConfig();
+
+        return services;
+    }
+
+    public static IServiceCollection AddCorsConfig(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+            options.AddPolicy("AllowAll", policy =>
+                policy.AllowAnyOrigin()
+                      .AllowAnyMethod()
+                      .AllowAnyHeader()
+            )
+        );
+
+        return services;
+    }
+
+    public static IServiceCollection AddOpenApiConfig(this IServiceCollection services)
+    {
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+
+        return services;
+    }
+
+    public static IServiceCollection AddEntitiesRepositriesDependencies(this IServiceCollection services)
+    {
+        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.AddScoped<ICountryRepository, CountryRepository>();
+        services.AddScoped<IStateProvinceRepository, StateProvinceRepository>();
+        services.AddScoped<ICityRepository, CityRepository>();
+        services.AddScoped<IAddressRepository, AddressRepository>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddEntitiesServicesDependencies(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+        services.Configure<AuthSettings>(configuration.GetSection("AuthSettings"));
+
+        services.AddScoped<IJwtProvider, JwtProvider>();
+        services.AddTransient<IEmailBodyBuilder, EmailBodyBuilder>();
+        services.AddTransient<IEmailService, EmailService>();
+        services.AddScoped<IAuthService, AuthService>();
+
+        services.AddScoped<ICountryService, CountryService>();
+        services.AddScoped<IStateProvinceService, StateProvinceService>();
+        services.AddScoped<ICityService, CityService>();
+        services.AddScoped<IAddressService, AddressService>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddMapsterConfig(this IServiceCollection services)
+    {
+        var mappingConfig = TypeAdapterConfig.GlobalSettings;
+        mappingConfig.Scan(Assembly.GetExecutingAssembly());
+        services.AddSingleton<IMapper>(new Mapper(mappingConfig));
+
+        return services;
+    }
+
+    public static IServiceCollection AddFluentValidationConfig(this IServiceCollection services)
+    {
+        services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
+        services.AddFluentValidationAutoValidation();
+
+        return services;
+    }
+
+    public static IServiceCollection AddSerilogConfig(this IServiceCollection services)
+    {
+        services.AddSerilog((sp, lc) =>
+            lc.ReadFrom.Configuration(sp.GetRequiredService<IConfiguration>())
+        );
+
+        return services;
+    }
+}

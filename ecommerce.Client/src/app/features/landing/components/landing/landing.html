@@ -1,0 +1,68 @@
+<div class="min-h-screen bg-neutral-50 dark:bg-slate-900">
+  <!-- Header -->
+  <header class="bg-white dark:bg-slate-800 border-b border-neutral-100 dark:border-slate-700 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: #0E7C7B">
+        <i class="lni lni-gift text-white text-sm"></i>
+      </div>
+      <span class="font-extrabold text-neutral-800 dark:text-slate-100 text-lg">GiftWave</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <app-theme-toggle />
+      <a routerLink="/login" class="btn-primary px-5 py-2.5 text-sm">Sign in</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="px-6 py-20 text-center max-w-3xl mx-auto">
+    <div class="inline-flex items-center gap-2 bg-teal-50 dark:bg-teal-900/30 text-primary border border-teal-200 dark:border-teal-800 rounded-full px-4 py-1.5 text-sm font-medium mb-6">
+      <i class="lni lni-play text-xs"></i>
+      Gifting made effortless
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-800 dark:text-slate-100 leading-tight tracking-tight mb-5">
+      Send a real gift<br class="hidden sm:block" />
+      <span style="color: #0E7C7B">in seconds</span>
+    </h1>
+    <p class="text-neutral-500 dark:text-slate-400 text-lg mb-8 max-w-xl mx-auto leading-relaxed">
+      Browse hundreds of Egyptian merchant gift cards and send them instantly — for birthdays, Eid, or just because.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a routerLink="/register" class="btn-primary px-7 py-3 text-base">Start Gifting</a>
+      <a routerLink="/login" class="px-7 py-3 rounded-xl border-2 border-primary text-primary font-bold text-base hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-colors">Sign in</a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="px-6 py-16 bg-white dark:bg-slate-800">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-2xl font-extrabold text-neutral-800 dark:text-slate-100 text-center mb-10">Why GiftWave?</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        @for (feature of features; track feature.title) {
+          <div class="group p-6 rounded-2xl border border-neutral-100 dark:border-slate-700 bg-neutral-50 dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-700 hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, #0E7C7B20, #0E7C7B10); color: #0E7C7B">
+              <span [innerHTML]="feature.icon"></span>
+            </div>
+            <h3 class="font-bold text-neutral-800 dark:text-slate-100 mb-2">{{ feature.title }}</h3>
+            <p class="text-neutral-500 dark:text-slate-400 text-sm leading-relaxed">{{ feature.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="px-6 py-16">
+    <div class="max-w-3xl mx-auto rounded-2xl text-white text-center p-10" style="background: linear-gradient(135deg, #0E7C7B, #065f5e)">
+      <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">Ready to send your first gift?</h2>
+      <p class="text-teal-200 mb-6">Create a free account in under 2 minutes.</p>
+      <a routerLink="/register" class="inline-block bg-white text-primary font-bold px-7 py-3 rounded-xl hover:bg-teal-50 transition-colors">
+        Create Free Account
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-neutral-100 dark:border-slate-700 px-6 py-8 text-center text-sm text-neutral-400 dark:text-slate-500">
+    <p>&copy; {{ currentYear }} GiftWave. All rights reserved.</p>
+  </footer>
+</div>
