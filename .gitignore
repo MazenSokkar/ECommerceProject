@@ -2,3 +2,7 @@
 *obj
 *appsettings*
 *vscode
+.vs/
+*.suo
+*.user
+*.pubxml.user
