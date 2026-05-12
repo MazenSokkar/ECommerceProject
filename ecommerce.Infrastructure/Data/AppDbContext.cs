@@ -18,6 +18,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAc
     public DbSet<City> Cities { get; set; }
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Merchant> Merchants { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Review> Reviews { get; set; }
+    public DbSet<Wishlist>  Wishlists { get; set; }
+    public DbSet<ProductImage> ProductImages { get; set; }
+    public DbSet<WishlistItem> WishlistItems { get; set; }
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

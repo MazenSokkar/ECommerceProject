@@ -1,9 +1,16 @@
 using ecommerce.Contracts.Address;
 using ecommerce.Contracts.Auth;
+using ecommerce.Contracts.Categories;
 using ecommerce.Contracts.City;
 using ecommerce.Contracts.Country;
+using ecommerce.Contracts.Products;
+using ecommerce.Contracts.Sellers;
 using ecommerce.Contracts.StateProvince;
 using ecommerce.Core.Entities;
+using ecommerce.Core.IRepositories;
+using ecommerce.Core.IServices;
+using ecommerce.Infrastructure.Repositories;
+using ecommerce.Infrastructure.Services;
 using Mapster;
 
 namespace ecommerce.API.Mapping;
@@ -39,5 +46,25 @@ public class MappingConfiguration : IRegister
         config.NewConfig<RegisterAddressRequest, Address>()
             .Map(dest => dest.Longitude, src => src.Longitude ?? string.Empty)
             .Map(dest => dest.Latitude, src => src.Latitude ?? string.Empty);
+
+        // Category
+        config.NewConfig<CreateCategoryRequest, Category>();
+        config.NewConfig<UpdateCategoryRequest, Category>();
+        config.NewConfig<Category, CategoryResponse>()
+            .Map(dest => dest.Children, src => src.Children);
+        //Marchant
+        config.NewConfig<CreateMerchantRequest, Merchant>();
+        config.NewConfig<UpdateMerchantRequest, Merchant>();
+        config.NewConfig<Merchant, MerchantResponse>();
+
+        // Product
+        config.NewConfig<CreateProductRequest, Product>();
+        config.NewConfig<UpdateProductRequest, Product>();
+
+        //Review 
+
+
+        //WishList
+        
     }
 }
