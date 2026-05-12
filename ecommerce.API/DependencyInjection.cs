@@ -1,7 +1,3 @@
-using System.Reflection;
-using System.Text;
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using ecommerce.Contracts;
 using ecommerce.Core.Entities;
 using ecommerce.Core.IRepositories;
@@ -10,6 +6,8 @@ using ecommerce.Infrastructure.Data;
 using ecommerce.Infrastructure.Options;
 using ecommerce.Infrastructure.Repositories;
 using ecommerce.Infrastructure.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +15,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Reflection;
+using System.Text;
 
 namespace ecommerce.API;
 
@@ -74,6 +74,15 @@ public static class DependencyInjection
         services.AddScoped<IStateProvinceRepository, StateProvinceRepository>();
         services.AddScoped<ICityRepository, CityRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IMerchantRepository, MerchantRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<IWishlistRepository, WishlistRepository>();
+
+
+
+
 
         return services;
     }
@@ -92,6 +101,15 @@ public static class DependencyInjection
         services.AddScoped<IStateProvinceService, StateProvinceService>();
         services.AddScoped<ICityService, CityService>();
         services.AddScoped<IAddressService, AddressService>();
+        services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IMerchantService, MerchantService>();
+        services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IReviewService, ReviewService>();
+        services.AddScoped<IWishlistService, WishlistService>();
+
+
+
+
 
         return services;
     }
