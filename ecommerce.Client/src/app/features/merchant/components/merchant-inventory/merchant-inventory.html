@@ -1,0 +1,90 @@
+<div class="space-y-6">
+    <div class="page-header rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-extrabold text-white tracking-tight">My Inventory</h1>
+            <p class="text-teal-200 text-sm mt-0.5">{{ products().length }} products</p>
+        </div>
+        <a routerLink="../products/new"
+            class="btn-accent self-start sm:self-auto px-5 py-2.5 rounded-xl text-sm font-bold">
+            + Add Product
+        </a>
+    </div>
+
+    @if (loading()) {
+    <div class="flex justify-center py-24">
+        <svg class="animate-spin h-8 w-8 text-[#0E7C7B]" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+        </svg>
+    </div>
+    }
+
+    @if (!loading()) {
+    <div class="data-card">
+        <table class="hidden sm:table w-full">
+            <thead class="table-head">
+                <tr>
+                    <th class="px-4 py-3 text-start text-sm font-semibold text-white">Product</th>
+                    <th class="px-4 py-3 text-start text-sm font-semibold text-white">Category</th>
+                    <th class="px-4 py-3 text-start text-sm font-semibold text-white">Price</th>
+                    <th class="px-4 py-3 text-start text-sm font-semibold text-white">Stock</th>
+                    <th class="px-4 py-3 text-start text-sm font-semibold text-white">Status</th>
+                    <th class="px-4 py-3 text-start text-sm font-semibold text-white">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-100 dark:divide-neutral-700">
+                @for (product of products(); track product.id) {
+                <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors">
+                    <td class="px-4 py-3 text-sm text-neutral-800 dark:text-neutral-100 font-medium">{{ product.name }}
+                    </td>
+                    <td class="px-4 py-3 text-sm text-neutral-500">{{ product.categoryName }}</td>
+                    <td class="px-4 py-3 text-sm text-[#0E7C7B] font-bold">${{ product.price | number:'1.2-2' }}</td>
+                    <td class="px-4 py-3 text-sm">
+                        @if (product.stock === 0) {
+                        <span class="text-[#DC2626] font-medium">Out of Stock</span>
+                        } @else if (product.stock <= 5) { <span class="text-[#F59E0B] font-medium">{{ product.stock }}
+                            left</span>
+                            } @else {
+                            <span class="text-neutral-600 dark:text-neutral-300">{{ product.stock }}</span>
+                            }
+                    </td>
+                    <td class="px-4 py-3">
+                        @if (product.isActive) {
+                        <span class="status-active">Active</span>
+                        } @else {
+                        <span class="role-badge">Inactive</span>
+                        }
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-2">
+                            <a [routerLink]="['../products', product.id, 'edit']"
+                                class="btn-primary px-3 py-1 rounded-lg text-xs">Edit</a>
+                            <button class="btn-danger px-3 py-1 rounded-lg text-xs"
+                                (click)="deleteProduct(product.id)">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+        <ul class="sm:hidden divide-y divide-neutral-100 dark:divide-neutral-700">
+            @for (product of products(); track product.id) {
+            <li class="p-4 space-y-2">
+                <div class="flex justify-between items-start">
+                    <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">{{ product.name }}</h3>
+                    <span class="text-[#0E7C7B] font-bold">${{ product.price | number:'1.2-2' }}</span>
+                </div>
+                <p class="text-sm text-neutral-400">{{ product.categoryName }} · Stock: {{ product.stock }}</p>
+                <div class="flex gap-2">
+                    <a [routerLink]="['../products', product.id, 'edit']"
+                        class="btn-primary px-3 py-1 rounded-lg text-xs">Edit</a>
+                    <button class="btn-danger px-3 py-1 rounded-lg text-xs"
+                        (click)="deleteProduct(product.id)">Delete</button>
+                </div>
+            </li>
+            }
+        </ul>
+    </div>
+    }
+</div>
