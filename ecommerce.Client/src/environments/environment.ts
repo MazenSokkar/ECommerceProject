@@ -1,4 +1,4 @@
 export const environment = {
-  production: true,
-  apiUrl: 'https://angular-ecommerce.runasp.net/api',
+  production: false,
+  apiUrl: 'https://localhost:7134/api',
 };
