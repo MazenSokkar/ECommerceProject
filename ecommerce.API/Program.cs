@@ -16,6 +16,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Host.UseSerilog((context, services, loggerConfiguration) =>
     loggerConfiguration.ReadFrom.Configuration(context.Configuration));
 
@@ -85,6 +86,15 @@ builder.Services.AddAuthentication(options =>
     };
 });
 builder.Services.AddApiDependencies(builder.Configuration);
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromDays(7);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+
 
 // error handling
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -92,20 +102,21 @@ builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
+
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GiftWave API v1"));
+
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseExceptionHandler();
 app.UseSerilogRequestLogging();
+app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 app.MapControllers();
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await DataSeeder.SeedAsync(context);
-}
+
 app.Run();
