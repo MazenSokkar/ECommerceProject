@@ -1,0 +1,68 @@
+<div class="space-y-6">
+    @if (loading()) {
+    <div class="flex justify-center py-24">
+        <svg class="animate-spin h-8 w-8 text-[#0E7C7B]" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+        </svg>
+    </div>
+    }
+
+    @if (!loading() && product()) {
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <div class="section-card p-4 space-y-3">
+            <div class="h-72 bg-neutral-100 dark:bg-neutral-800 rounded-xl overflow-hidden">
+                @if (selectedImage()) {
+                <img [src]="selectedImage()!" alt="product" class="w-full h-full object-cover" />
+                }
+            </div>
+            <div class="flex gap-2 flex-wrap">
+                @for (img of product()!.images; track img) {
+                <img [src]="img" class="w-16 h-16 rounded-lg object-cover cursor-pointer border-2"
+                    [class.border-[#0E7C7B]]="selectedImage() === img"
+                    [class.border-transparent]="selectedImage() !== img" (click)="selectImage(img)" />
+                }
+            </div>
+        </div>
+
+        <div class="section-card card-stripe p-6 space-y-4">
+            <p class="text-sm text-neutral-400">{{ product()!.categoryName }}</p>
+            <h1 class="text-2xl font-extrabold text-neutral-800 dark:text-neutral-100">{{ product()!.name }}</h1>
+            <p class="text-sm text-neutral-400">by {{ product()!.merchantStoreName }}</p>
+
+            <div class="flex items-center gap-1">
+                <span class="text-[#F59E0B]">★</span>
+                <span class="text-neutral-600 dark:text-neutral-300">{{ product()!.averageRating | number:'1.1-1'
+                    }}</span>
+                <span class="text-xs text-neutral-400">({{ product()!.reviewCount }} reviews)</span>
+            </div>
+
+            <p class="text-3xl font-bold text-[#0E7C7B]">${{ product()!.price | number:'1.2-2' }}</p>
+
+            @if (product()!.stock === 0) {
+            <span class="text-red-500 font-medium">Out of Stock</span>
+            } @else if (product()!.stock <= 5) { <span class="text-amber-500 font-medium">Only {{ product()!.stock }}
+                left!</span>
+                } @else {
+                <span class="text-green-600 font-medium">In Stock</span>
+                }
+
+                @if (product()!.description) {
+                <p class="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">{{ product()!.description }}
+                </p>
+                }
+
+                <div class="flex gap-3 pt-2">
+                    <button class="btn-primary px-6 py-3 rounded-xl font-bold flex-1"
+                        [disabled]="product()!.stock === 0">
+                        Add to Cart
+                    </button>
+                    <button class="btn-accent px-4 py-3 rounded-xl">
+                        ♡
+                    </button>
+                </div>
+        </div>
+    </div>
+    }
+</div>

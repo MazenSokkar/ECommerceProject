@@ -1,0 +1,76 @@
+<div class="space-y-6">
+    <div class="page-header rounded-2xl p-5 sm:p-6">
+        <h1 class="text-2xl font-extrabold text-white tracking-tight">
+            {{ isEdit() ? 'Edit Product' : 'Add New Product' }}
+        </h1>
+        <p class="text-teal-200 text-sm mt-0.5">Fill in the product details below</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 section-card card-stripe p-6">
+            <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+
+                <div>
+                    <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-1">Product
+                        Name</label>
+                    <input formControlName="name" class="form-input w-full" placeholder="Enter product name"
+                        [class.form-input--error]="form.controls.name.invalid && form.controls.name.touched" />
+                    @if (form.controls.name.invalid && form.controls.name.touched) {
+                    <p class="text-[#DC2626] text-xs mt-1">Name is required</p>
+                    }
+                </div>
+
+                <div>
+                    <label
+                        class="block text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-1">Description</label>
+                    <textarea formControlName="description" class="form-input w-full h-28"
+                        placeholder="Enter product description"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-1">Price
+                            ($)</label>
+                        <input type="number" formControlName="price" class="form-input w-full"
+                            [class.form-input--error]="form.controls.price.invalid && form.controls.price.touched" />
+                        @if (form.controls.price.invalid && form.controls.price.touched) {
+                        <p class="text-[#DC2626] text-xs mt-1">Price must be greater than 0</p>
+                        }
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-1">Stock</label>
+                        <input type="number" formControlName="stock" class="form-input w-full"
+                            [class.form-input--error]="form.controls.stock.invalid && form.controls.stock.touched" />
+                        @if (form.controls.stock.invalid && form.controls.stock.touched) {
+                        <p class="text-[#DC2626] text-xs mt-1">Stock cannot be negative</p>
+                        }
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-1">Category
+                        ID</label>
+                    <input type="number" formControlName="categoryId" class="form-input w-full"
+                        [class.form-input--error]="form.controls.categoryId.invalid && form.controls.categoryId.touched" />
+                    @if (form.controls.categoryId.invalid && form.controls.categoryId.touched) {
+                    <p class="text-[#DC2626] text-xs mt-1">Category is required</p>
+                    }
+                </div>
+
+                <button type="submit" class="btn-primary w-full py-3 rounded-xl font-bold mt-2" [disabled]="loading()">
+                    @if (loading()) { Saving... } @else { {{ isEdit() ? 'Update Product' : 'Add Product' }} }
+                </button>
+
+            </form>
+        </div>
+
+        <div class="section-card p-6 space-y-3 self-start">
+            <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">Summary</h3>
+            <p class="text-sm text-neutral-400">Name: {{ form.value.name || '—' }}</p>
+            <p class="text-sm text-neutral-400">Price: ${{ form.value.price || 0 }}</p>
+            <p class="text-sm text-neutral-400">Stock: {{ form.value.stock || 0 }}</p>
+        </div>
+    </div>
+</div>

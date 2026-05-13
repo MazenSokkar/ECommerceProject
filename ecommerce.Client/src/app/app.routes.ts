@@ -5,7 +5,6 @@ import { authGuard } from './core/guards/auth.guard';
 import { AUTH_ROUTES } from './features/auth/auth.routes';
 
 export const routes: Routes = [
-  // Landing page
   {
     path: '',
     pathMatch: 'full',
@@ -13,7 +12,6 @@ export const routes: Routes = [
       import('./features/landing/components/landing/landing').then(m => m.Landing),
   },
 
-  // Auth screens (split-panel layout)
   {
     path: '',
     component: AuthLayout,
@@ -23,13 +21,26 @@ export const routes: Routes = [
     ],
   },
 
-  // Protected app shell
   {
     path: 'app',
     component: MainLayout,
     canActivate: [authGuard],
     children: [
-      // Sprint 2+ feature routes go here
+      {
+        path: 'products',
+        loadChildren: () =>
+          import('./features/products/products.routes').then(m => m.PRODUCTS_ROUTES),
+      },
+      {
+        path: 'wishlist',
+        loadChildren: () =>
+          import('./features/wishlist/wishlist.routes').then(m => m.WISHLIST_ROUTES),
+      },
+      {
+        path: 'merchant',
+        loadChildren: () =>
+          import('./features/merchant/merchant.routes').then(m => m.MERCHANT_ROUTES),
+      },
     ],
   },
 
