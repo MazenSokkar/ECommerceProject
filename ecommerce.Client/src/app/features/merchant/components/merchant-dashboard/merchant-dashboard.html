@@ -1,0 +1,33 @@
+<div class="space-y-6">
+    <div class="page-header rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-extrabold text-white tracking-tight">Merchant Dashboard</h1>
+            <p class="text-teal-200 text-sm mt-0.5">Manage your store</p>
+        </div>
+        <a routerLink="products/new"
+            class="btn-accent self-start sm:self-auto px-5 py-2.5 rounded-xl text-sm font-bold">
+            + Add Product
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="section-card card-stripe p-5 text-center">
+            <p class="text-3xl font-extrabold text-[#0E7C7B]">{{ totalProducts() }}</p>
+            <p class="text-sm text-neutral-400 mt-1">Total Products</p>
+        </div>
+        <div class="section-card p-5 text-center">
+            <p class="text-3xl font-extrabold text-[#F59E0B]">{{ lowStock() }}</p>
+            <p class="text-sm text-neutral-400 mt-1">Low Stock</p>
+        </div>
+        <div class="section-card p-5 text-center">
+            <p class="text-3xl font-extrabold text-[#DC2626]">{{ outOfStock() }}</p>
+            <p class="text-sm text-neutral-400 mt-1">Out of Stock</p>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="section-card card-stripe p-6 flex gap-4">
+        <a routerLink="inventory" class="btn-primary px-6 py-3 rounded-xl font-bold">View Inventory</a>
+    </div>
+</div>
