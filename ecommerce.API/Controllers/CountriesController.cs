@@ -13,7 +13,9 @@ public class CountriesController(ICountryService service) : ControllerBase
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var result = await service.GetAllAsync(cancellationToken);
-        return Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Countries fetched successfully."));
+        return result.IsSuccess
+            ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Countries fetched successfully."))
+            : result.ToProblem();
     }
 
     [HttpGet("{id}")]
@@ -22,7 +24,7 @@ public class CountriesController(ICountryService service) : ControllerBase
         var result = await service.GetByIdAsync(id, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Country fetched successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost]
@@ -31,7 +33,7 @@ public class CountriesController(ICountryService service) : ControllerBase
         var result = await service.CreateAsync(request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Country created successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPut("{id}")]
@@ -40,7 +42,7 @@ public class CountriesController(ICountryService service) : ControllerBase
         var result = await service.UpdateAsync(id, request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Country updated successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpDelete("{id}")]
@@ -49,6 +51,6 @@ public class CountriesController(ICountryService service) : ControllerBase
         var result = await service.DeleteAsync(id, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Country deleted successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 }

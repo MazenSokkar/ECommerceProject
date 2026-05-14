@@ -13,7 +13,9 @@ public class CitiesController(ICityService service) : ControllerBase
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var result = await service.GetAllAsync(cancellationToken);
-        return Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Cities fetched successfully."));
+        return result.IsSuccess
+            ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Cities fetched successfully."))
+            : result.ToProblem();
     }
 
     [HttpGet("by-state-province/{stateProvinceId}")]
@@ -22,7 +24,7 @@ public class CitiesController(ICityService service) : ControllerBase
         var result = await service.GetByStateProvinceAsync(stateProvinceId, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Cities fetched successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpGet("{id}")]
@@ -31,7 +33,7 @@ public class CitiesController(ICityService service) : ControllerBase
         var result = await service.GetByIdAsync(id, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "City fetched successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost]
@@ -40,7 +42,7 @@ public class CitiesController(ICityService service) : ControllerBase
         var result = await service.CreateAsync(request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "City created successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPut("{id}")]
@@ -49,7 +51,7 @@ public class CitiesController(ICityService service) : ControllerBase
         var result = await service.UpdateAsync(id, request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "City updated successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpDelete("{id}")]
@@ -58,6 +60,6 @@ public class CitiesController(ICityService service) : ControllerBase
         var result = await service.DeleteAsync(id, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("City deleted successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 }

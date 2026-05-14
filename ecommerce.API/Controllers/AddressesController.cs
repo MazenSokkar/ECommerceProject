@@ -13,21 +13,27 @@ public class AddressesController(IAddressService service) : ControllerBase
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var result = await service.GetAllAsync(cancellationToken);
-        return Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Addresses fetched successfully."));
+        return result.IsSuccess
+            ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Addresses fetched successfully."))
+            : result.ToProblem();
     }
 
     [HttpGet("by-user/{userId}")]
     public async Task<IActionResult> GetByUserId(int userId, CancellationToken cancellationToken)
     {
         var result = await service.GetByUserIdAsync(userId, cancellationToken);
-        return Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Addresses fetched successfully."));
+        return result.IsSuccess
+            ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Addresses fetched successfully."))
+            : result.ToProblem();
     }
 
     [HttpGet("by-merchant/{merchantId}")]
     public async Task<IActionResult> GetByMerchantId(int merchantId, CancellationToken cancellationToken)
     {
         var result = await service.GetByMerchantIdAsync(merchantId, cancellationToken);
-        return Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Addresses fetched successfully."));
+        return result.IsSuccess
+            ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Addresses fetched successfully."))
+            : result.ToProblem();
     }
 
     [HttpGet("{id}")]
@@ -36,7 +42,7 @@ public class AddressesController(IAddressService service) : ControllerBase
         var result = await service.GetByIdAsync(id, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Address fetched successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost]
@@ -45,7 +51,7 @@ public class AddressesController(IAddressService service) : ControllerBase
         var result = await service.CreateAsync(request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Address created successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPut("{id}")]
@@ -54,7 +60,7 @@ public class AddressesController(IAddressService service) : ControllerBase
         var result = await service.UpdateAsync(id, request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Address updated successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpDelete("{id}")]
@@ -63,6 +69,6 @@ public class AddressesController(IAddressService service) : ControllerBase
         var result = await service.DeleteAsync(id, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Address deleted successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 }

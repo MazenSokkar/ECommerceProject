@@ -28,7 +28,7 @@ public class WishlistController(IWishlistService service) : ControllerBase
         var result = await service.AddItemAsync(GetCurrentUserId(), request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Item added to wishlist successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpDelete("items/{productId}")]
@@ -37,6 +37,6 @@ public class WishlistController(IWishlistService service) : ControllerBase
         var result = await service.RemoveItemAsync(GetCurrentUserId(), productId, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Item removed from wishlist successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 }

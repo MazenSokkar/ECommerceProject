@@ -21,7 +21,7 @@ public class SellersController(IMerchantService service) : ControllerBase
         var result = await service.GetAllAsync(cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Sellers fetched successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpGet("{id}")]
@@ -31,7 +31,7 @@ public class SellersController(IMerchantService service) : ControllerBase
         var result = await service.GetByIdAsync(id, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Seller fetched successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost("register")]
@@ -41,7 +41,7 @@ public class SellersController(IMerchantService service) : ControllerBase
         var result = await service.RegisterAsync(GetCurrentUserId(), request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Seller registered successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPut("me")]
@@ -51,7 +51,7 @@ public class SellersController(IMerchantService service) : ControllerBase
         var result = await service.UpdateProfileAsync(GetCurrentUserId(), request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Profile updated successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPut("{id}/status")]
@@ -61,6 +61,6 @@ public class SellersController(IMerchantService service) : ControllerBase
         var result = await service.UpdateStatusAsync(id, request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Seller status updated successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 }

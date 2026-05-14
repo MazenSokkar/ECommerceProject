@@ -7,7 +7,7 @@ namespace ecommerce.Contracts.Abstractions;
 
 public static class ResultExtensions
 {
-    public static ObjectResult ToProblem(this Result result, int statusCode)
+    public static ObjectResult ToProblem(this Result result)
     {
         if (result.IsSuccess)
             throw new InvalidOperationException("Can't convert success result to problem");
