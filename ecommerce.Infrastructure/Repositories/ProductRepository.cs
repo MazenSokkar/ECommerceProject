@@ -1,4 +1,4 @@
-﻿using ecommerce.Core.Entities;
+using ecommerce.Core.Entities;
 using ecommerce.Core.IRepositories;
 using ecommerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -68,6 +68,46 @@ public class ProductRepository(AppDbContext context) : IProductRepository
             .Include(p => p.Images)
             .Where(p => p.MerchantId == merchantId)
             .ToListAsync(cancellationToken);
+
+    public async Task<IEnumerable<Product>> GetBestSellersAsync(int count, CancellationToken cancellationToken = default)
+    {
+        return await context.Products
+            .Include(p => p.Images)
+            .Include(p => p.Merchant)
+            .Include(p => p.Category)
+            .Include(p => p.Reviews)
+            .Where(p => p.IsActive)
+            // Best sellers based on total items ordered
+            .OrderByDescending(p => context.OrderItems.Where(oi => oi.ProductId == p.Id).Sum(oi => (int?)oi.Quantity) ?? 0)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Product>> GetNewArrivalsAsync(int count, CancellationToken cancellationToken = default)
+    {
+        return await context.Products
+            .Include(p => p.Images)
+            .Include(p => p.Merchant)
+            .Include(p => p.Category)
+            .Include(p => p.Reviews)
+            .Where(p => p.IsActive)
+            .OrderByDescending(p => p.CreatedOn)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Product>> GetFeaturedProductsAsync(int count, CancellationToken cancellationToken = default)
+    {
+        return await context.Products
+            .Include(p => p.Images)
+            .Include(p => p.Merchant)
+            .Include(p => p.Category)
+            .Include(p => p.Reviews)
+            .Where(p => p.IsActive && p.IsFeatured)
+            .OrderByDescending(p => p.CreatedOn)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+    }
 
     public async Task AddAsync(Product product, CancellationToken cancellationToken = default)
         => await context.Products.AddAsync(product, cancellationToken);

@@ -1,4 +1,4 @@
-﻿using ecommerce.Contracts.Abstractions;
+using ecommerce.Contracts.Abstractions;
 using ecommerce.Contracts.Products;
 
 namespace ecommerce.Core.IServices;
@@ -17,6 +17,10 @@ public interface IProductService
 
     Task<Result<ProductResponse>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<Result<IEnumerable<ProductListItemResponse>>> GetMyProductsAsync(int userId, CancellationToken cancellationToken = default);
+    Task<Result<IEnumerable<ProductListItemResponse>>> GetBestSellersAsync(int count, CancellationToken cancellationToken = default);
+    Task<Result<IEnumerable<ProductListItemResponse>>> GetNewArrivalsAsync(int count, CancellationToken cancellationToken = default);
+    Task<Result<IEnumerable<ProductListItemResponse>>> GetFeaturedProductsAsync(int count, CancellationToken cancellationToken = default);
+    
     Task<Result<ProductResponse>> CreateAsync(int userId, CreateProductRequest request, CancellationToken cancellationToken = default);
     Task<Result<ProductResponse>> UpdateAsync(int userId, int id, UpdateProductRequest request, CancellationToken cancellationToken = default);
     Task<Result> DeleteAsync(int userId, int id, CancellationToken cancellationToken = default);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -15,6 +15,7 @@ namespace ecommerce.Core.Entities
         public int Stock { get; set; }
         public bool IsActive { get; set; } = true;
         public bool Deleted { get; set; }
+        public bool IsFeatured { get; set; } = false;
 
         public Merchant Merchant { get; set; } = null!;
         public Category Category { get; set; } = null!;

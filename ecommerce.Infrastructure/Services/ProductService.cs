@@ -1,4 +1,4 @@
-﻿using ecommerce.Contracts.Abstractions;
+using ecommerce.Contracts.Abstractions;
 using ecommerce.Contracts.Errors;
 using ecommerce.Contracts.Products;
 using ecommerce.Core.Entities;
@@ -74,6 +74,48 @@ public class ProductService(
             merchant.StoreName
         ));
 
+        return Result.Success(response);
+    }
+
+    public async Task<Result<IEnumerable<ProductListItemResponse>>> GetBestSellersAsync(int count, CancellationToken cancellationToken = default)
+    {
+        var products = await repository.GetBestSellersAsync(count, cancellationToken);
+        var response = products.Select(p => new ProductListItemResponse(
+            p.Id, p.Name, p.Price, p.Stock, p.IsActive,
+            p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl ?? p.Images.FirstOrDefault()?.ImageUrl,
+            p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
+            p.Reviews.Count,
+            p.Category?.Name ?? "Uncategorized",
+            p.Merchant?.StoreName ?? "Unknown"
+        ));
+        return Result.Success(response);
+    }
+
+    public async Task<Result<IEnumerable<ProductListItemResponse>>> GetNewArrivalsAsync(int count, CancellationToken cancellationToken = default)
+    {
+        var products = await repository.GetNewArrivalsAsync(count, cancellationToken);
+        var response = products.Select(p => new ProductListItemResponse(
+            p.Id, p.Name, p.Price, p.Stock, p.IsActive,
+            p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl ?? p.Images.FirstOrDefault()?.ImageUrl,
+            p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
+            p.Reviews.Count,
+            p.Category?.Name ?? "Uncategorized",
+            p.Merchant?.StoreName ?? "Unknown"
+        ));
+        return Result.Success(response);
+    }
+
+    public async Task<Result<IEnumerable<ProductListItemResponse>>> GetFeaturedProductsAsync(int count, CancellationToken cancellationToken = default)
+    {
+        var products = await repository.GetFeaturedProductsAsync(count, cancellationToken);
+        var response = products.Select(p => new ProductListItemResponse(
+            p.Id, p.Name, p.Price, p.Stock, p.IsActive,
+            p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl ?? p.Images.FirstOrDefault()?.ImageUrl,
+            p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
+            p.Reviews.Count,
+            p.Category?.Name ?? "Uncategorized",
+            p.Merchant?.StoreName ?? "Unknown"
+        ));
         return Result.Success(response);
     }
 

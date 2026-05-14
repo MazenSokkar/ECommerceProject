@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProductApiService } from '../../services/product-api.service';
 import { Product, ProductFilter } from '../../models/product.model';
@@ -16,6 +16,7 @@ import { Category } from '../../../categories/models/category.model';
 })
 export class ProductList implements OnInit {
     private readonly api = inject(ProductApiService);
+    private readonly route = inject(ActivatedRoute);
 
     protected readonly products = signal<Product[]>([]);
     protected readonly total = signal(0);
@@ -33,6 +34,10 @@ export class ProductList implements OnInit {
     protected readonly selectedCategory = signal<number | null>(null);
 
     ngOnInit(): void {
+        const sortParam = this.route.snapshot.queryParamMap.get('sortBy');
+        if (sortParam === 'newest' || sortParam === 'price_asc' || sortParam === 'price_desc') {
+            this.sortBy.set(sortParam);
+        }
         this.loadProducts();
     }
 

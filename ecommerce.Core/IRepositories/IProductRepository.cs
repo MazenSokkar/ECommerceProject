@@ -1,4 +1,4 @@
-﻿using ecommerce.Core.Entities;
+using ecommerce.Core.Entities;
 
 namespace ecommerce.Core.IRepositories;
 
@@ -15,6 +15,9 @@ public interface IProductRepository
         string sortBy,
         CancellationToken cancellationToken = default);
     Task<IEnumerable<Product>> GetByMerchantIdAsync(int merchantId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Product>> GetBestSellersAsync(int count, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Product>> GetNewArrivalsAsync(int count, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Product>> GetFeaturedProductsAsync(int count, CancellationToken cancellationToken = default);
     Task AddAsync(Product product, CancellationToken cancellationToken = default);
     void Update(Product product);
     void Delete(Product product);

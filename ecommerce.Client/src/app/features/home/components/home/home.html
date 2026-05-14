@@ -1,6 +1,6 @@
-<div class="space-y-8">
+<div class="space-y-12">
   <!-- Banners Slider -->
-  @if (loading()) {
+  @if (bannersLoading()) {
     <div class="w-full h-64 sm:h-80 md:h-100 bg-neutral-100 dark:bg-slate-800 rounded-2xl animate-pulse flex items-center justify-center shadow-sm">
       <i class="lni lni-spinner-solid animate-spin text-4xl text-primary"></i>
     </div>
@@ -50,6 +50,63 @@
     </div>
   }
 
+  <!-- Featured Products Section -->
+  @if (featuredProducts().length > 0) {
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">Featured Products</h3>
+          <p class="text-neutral-500 text-sm">Handpicked top quality items for you</p>
+        </div>
+        <a routerLink="/app/products" class="text-primary font-semibold hover:underline text-sm">View All</a>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (product of featuredProducts(); track product.id) {
+          <ng-container *ngTemplateOutlet="productCard; context: { product: product }"></ng-container>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- New Arrivals Section -->
+  @if (newArrivals().length > 0) {
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">New Arrivals</h3>
+          <p class="text-neutral-500 text-sm">Be the first to get the latest tech</p>
+        </div>
+        <a routerLink="/app/products" [queryParams]="{ sortBy: 'newest' }" class="text-primary font-semibold hover:underline text-sm">View All</a>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (product of newArrivals(); track product.id) {
+          <ng-container *ngTemplateOutlet="productCard; context: { product: product }"></ng-container>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Best Sellers Section -->
+  @if (bestSellers().length > 0) {
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">Best Sellers</h3>
+          <p class="text-neutral-500 text-sm">Most popular items in our shop</p>
+        </div>
+        <a routerLink="/app/products" class="text-primary font-semibold hover:underline text-sm">View All</a>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (product of bestSellers(); track product.id) {
+          <ng-container *ngTemplateOutlet="productCard; context: { product: product }"></ng-container>
+        }
+      </div>
+    </section>
+  }
+
   <!-- Welcome / CTA Section -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <div class="section-card p-8 sm:p-10 flex flex-col justify-center items-start border border-neutral-100 dark:border-slate-700 bg-white dark:bg-slate-800">
@@ -71,3 +128,41 @@
     </div>
   </div>
 </div>
+
+<!-- Product Card Template -->
+<ng-template #productCard let-product="product">
+  <a [routerLink]="['/app/products', product.id]"
+      class="section-card card-stripe hover:shadow-lg transition-shadow cursor-pointer bg-white dark:bg-slate-800 block h-full">
+      <!-- Image -->
+      <div class="h-48 bg-neutral-100 dark:bg-neutral-900 rounded-t-xl overflow-hidden">
+          @if (product.primaryImageUrl) {
+            <img [src]="product.primaryImageUrl" [alt]="product.name" class="w-full h-full object-cover" />
+          } @else {
+            <div class="w-full h-full flex items-center justify-center text-neutral-400">
+                <i class="lni lni-image text-4xl"></i>
+            </div>
+          }
+      </div>
+
+      <div class="p-4 space-y-2">
+          <p class="text-[10px] uppercase tracking-wider font-bold text-primary">{{ product.categoryName }}</p>
+          <h3 class="font-bold text-neutral-800 dark:text-neutral-100 truncate text-sm">{{ product.name }}</h3>
+          <p class="text-xs text-neutral-400">{{ product.merchantStoreName }}</p>
+
+          <div class="flex items-center gap-1">
+              <span class="text-amber-400 text-xs">★</span>
+              <span class="text-xs font-bold text-neutral-600 dark:text-neutral-300">{{ product.averageRating | number:'1.1-1' }}</span>
+              <span class="text-[10px] text-neutral-400">({{ product.reviewCount }})</span>
+          </div>
+
+          <div class="flex items-center justify-between mt-3">
+              <span class="text-base font-extrabold text-primary">${{ product.price | number:'1.2-2' }}</span>
+              @if (product.stock === 0) {
+                <span class="text-[10px] text-red-500 font-bold px-2 py-0.5 rounded-full bg-red-50">Sold Out</span>
+              } @else if (product.stock <= 5) {
+                <span class="text-[10px] text-amber-500 font-bold px-2 py-0.5 rounded-full bg-amber-50">Only {{ product.stock }} left</span>
+              }
+          </div>
+      </div>
+  </a>
+</ng-template>
