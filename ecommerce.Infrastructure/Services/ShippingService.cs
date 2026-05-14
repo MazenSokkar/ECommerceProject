@@ -51,6 +51,7 @@ public class ShippingService(IShippingRepository shippingRepository,
                 "shipping-update",
                 new Dictionary<string, string>
                 {
+                    { "{{name}}", order.User.FirstName },
                     { "{{orderNumber}}", order.OrderNumber },
                     { "{{status}}", "Shipped" },
                     { "{{tracking}}", shipping.TrackingNumber ?? "" }
