@@ -1,0 +1,110 @@
+/* src/app/features/payments/components/payment-page/payment-page.css */
+
+/* ── Stripe card element container ─────────────────────────── */
+.stripe-input {
+  width: 100%;
+  padding: 0.75rem 0.875rem;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-height: 44px;
+}
+
+.stripe-input:focus-within {
+  border-color: #0E7C7B;
+  box-shadow: 0 0 0 3px rgba(14, 124, 123, 0.12);
+}
+
+:host-context(.dark) .stripe-input {
+  background-color: #1E293B;
+  border-color: #334155;
+}
+
+/* ── Payment method card ────────────────────────────────────── */
+.method-card {
+  padding: 1rem;
+  border-radius: 0.875rem;
+  border: 1.5px solid #E5E7EB;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.method-card:hover {
+  border-color: #0E7C7B;
+  box-shadow: 0 2px 8px rgba(14, 124, 123, 0.1);
+}
+
+.method-card--selected {
+  border-color: #0E7C7B;
+  background-color: rgba(14, 124, 123, 0.04);
+  box-shadow: 0 2px 12px rgba(14, 124, 123, 0.12);
+}
+
+:host-context(.dark) .method-card {
+  background-color: #1E293B;
+  border-color: #334155;
+}
+
+:host-context(.dark) .method-card:hover {
+  border-color: #14B8A6;
+}
+
+:host-context(.dark) .method-card--selected {
+  border-color: #14B8A6;
+  background-color: rgba(20, 184, 166, 0.08);
+}
+
+/* ── Method icon ────────────────────────────────────────────── */
+.method-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.625rem;
+  background-color: #F3F4F6;
+  color: #6B7280;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.method-icon--selected {
+  background-color: rgba(14, 124, 123, 0.12);
+  color: #0E7C7B;
+}
+
+:host-context(.dark) .method-icon {
+  background-color: #334155;
+  color: #9CA3AF;
+}
+
+:host-context(.dark) .method-icon--selected {
+  background-color: rgba(20, 184, 166, 0.15);
+  color: #14B8A6;
+}
+
+/* ── Radio dot ──────────────────────────────────────────────── */
+.radio-dot {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 9999px;
+  border: 2px solid #D1D5DB;
+  flex-shrink: 0;
+  transition: border-color 0.15s ease;
+  position: relative;
+}
+
+.radio-dot--selected {
+  border-color: #0E7C7B;
+  border-width: 5px;
+}
+
+:host-context(.dark) .radio-dot {
+  border-color: #475569;
+}
+
+:host-context(.dark) .radio-dot--selected {
+  border-color: #14B8A6;
+}

@@ -1,0 +1,59 @@
+/* src/app/features/shipping/components/shipping-tracking/shipping-tracking.css */
+
+/* ── Step icon ──────────────────────────────────────────────── */
+.step-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.step-completed {
+  background-color: rgba(14, 124, 123, 0.1);
+  border-color: #0E7C7B;
+}
+
+.step-active {
+  background-color: #0E7C7B;
+  border-color: #0E7C7B;
+  box-shadow: 0 0 0 4px rgba(14, 124, 123, 0.15);
+}
+
+.step-pending {
+  background-color: #F3F4F6;
+  border-color: #E5E7EB;
+}
+
+.step-returned {
+  background-color: rgba(220, 38, 38, 0.1);
+  border-color: #DC2626;
+}
+
+/* ── Connector line ─────────────────────────────────────────── */
+.step-line {
+  width: 2px;
+  flex: 1;
+  min-height: 1.5rem;
+  background-color: #E5E7EB;
+  margin: 4px 0;
+  transition: background-color 0.3s ease;
+}
+
+.step-line--active {
+  background-color: #0E7C7B;
+}
+
+/* ── Dark mode ──────────────────────────────────────────────── */
+:host-context(.dark) .step-pending {
+  background-color: #1E293B;
+  border-color: #334155;
+}
+
+:host-context(.dark) .step-line {
+  background-color: #334155;
+}
