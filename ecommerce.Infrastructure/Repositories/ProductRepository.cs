@@ -30,7 +30,7 @@ public class ProductRepository(AppDbContext context) : IProductRepository
             .Include(p => p.Category)
             .Include(p => p.Images)
            .Include(p => p.Reviews)
-            .Where(p => p.IsActive)
+            .Where(p => p.IsActive && !p.Deleted)
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(search))
@@ -76,7 +76,7 @@ public class ProductRepository(AppDbContext context) : IProductRepository
             .Include(p => p.Merchant)
             .Include(p => p.Category)
             .Include(p => p.Reviews)
-            .Where(p => p.IsActive)
+            .Where(p => p.IsActive && !p.Deleted)
             // Best sellers based on total items ordered
             .OrderByDescending(p => context.OrderItems.Where(oi => oi.ProductId == p.Id).Sum(oi => (int?)oi.Quantity) ?? 0)
             .Take(count)
@@ -90,7 +90,7 @@ public class ProductRepository(AppDbContext context) : IProductRepository
             .Include(p => p.Merchant)
             .Include(p => p.Category)
             .Include(p => p.Reviews)
-            .Where(p => p.IsActive)
+            .Where(p => p.IsActive && !p.Deleted)
             .OrderByDescending(p => p.CreatedOn)
             .Take(count)
             .ToListAsync(cancellationToken);
@@ -103,7 +103,7 @@ public class ProductRepository(AppDbContext context) : IProductRepository
             .Include(p => p.Merchant)
             .Include(p => p.Category)
             .Include(p => p.Reviews)
-            .Where(p => p.IsActive && p.IsFeatured)
+            .Where(p => p.IsActive && !p.Deleted && p.IsFeatured)
             .OrderByDescending(p => p.CreatedOn)
             .Take(count)
             .ToListAsync(cancellationToken);

@@ -24,12 +24,12 @@ public class ProductService(
 
         var response = items.Select(p => new ProductListItemResponse(
             p.Id, p.Name, p.Price, p.Stock, p.IsActive,
-            p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl,
+            p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl ?? p.Images.FirstOrDefault()?.ImageUrl,
             p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
             p.Reviews.Count,
-            p.Category.Name,
-            p.Merchant.StoreName
-        ));
+            p.Category?.Name ?? "Uncategorized",
+            p.Merchant?.StoreName ?? "Unknown"
+        )).ToList();
 
         return Result.Success(new ProductListResponse(response, total));
     }
@@ -68,13 +68,13 @@ public class ProductService(
 
         var response = products.Select(p => new ProductListItemResponse(
             p.Id, p.Name, p.Price, p.Stock, p.IsActive,
-            p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl,
+            p.Images.FirstOrDefault(i => i.IsPrimary)?.ImageUrl ?? p.Images.FirstOrDefault()?.ImageUrl,
             0, 0,
-            p.Category.Name,
+            p.Category?.Name ?? "Uncategorized",
             merchant.StoreName
-        ));
+        )).ToList();
 
-        return Result.Success(response);
+        return Result.Success<IEnumerable<ProductListItemResponse>>(response);
     }
 
     public async Task<Result<IEnumerable<ProductListItemResponse>>> GetBestSellersAsync(int count, CancellationToken cancellationToken = default)
@@ -87,8 +87,8 @@ public class ProductService(
             p.Reviews.Count,
             p.Category?.Name ?? "Uncategorized",
             p.Merchant?.StoreName ?? "Unknown"
-        ));
-        return Result.Success(response);
+        )).ToList();
+        return Result.Success<IEnumerable<ProductListItemResponse>>(response);
     }
 
     public async Task<Result<IEnumerable<ProductListItemResponse>>> GetNewArrivalsAsync(int count, CancellationToken cancellationToken = default)
@@ -101,8 +101,8 @@ public class ProductService(
             p.Reviews.Count,
             p.Category?.Name ?? "Uncategorized",
             p.Merchant?.StoreName ?? "Unknown"
-        ));
-        return Result.Success(response);
+        )).ToList();
+        return Result.Success<IEnumerable<ProductListItemResponse>>(response);
     }
 
     public async Task<Result<IEnumerable<ProductListItemResponse>>> GetFeaturedProductsAsync(int count, CancellationToken cancellationToken = default)
@@ -115,8 +115,8 @@ public class ProductService(
             p.Reviews.Count,
             p.Category?.Name ?? "Uncategorized",
             p.Merchant?.StoreName ?? "Unknown"
-        ));
-        return Result.Success(response);
+        )).ToList();
+        return Result.Success<IEnumerable<ProductListItemResponse>>(response);
     }
 
     public async Task<Result<ProductResponse>> CreateAsync(int userId, CreateProductRequest request, CancellationToken cancellationToken = default)
