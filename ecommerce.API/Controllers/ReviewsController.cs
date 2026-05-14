@@ -29,7 +29,7 @@ public class ReviewsController(IReviewService service) : ControllerBase
         var result = await service.CreateAsync(GetCurrentUserId(), request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Review created successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpDelete("{id}")]
@@ -39,6 +39,6 @@ public class ReviewsController(IReviewService service) : ControllerBase
         var result = await service.DeleteAsync(GetCurrentUserId(), id, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Review deleted successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 }

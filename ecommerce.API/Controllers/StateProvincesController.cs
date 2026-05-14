@@ -22,7 +22,7 @@ public class StateProvincesController(IStateProvinceService service) : Controlle
         var result = await service.GetByCountryAsync(countryId, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "State/provinces fetched successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpGet("{id}")]
@@ -31,7 +31,7 @@ public class StateProvincesController(IStateProvinceService service) : Controlle
         var result = await service.GetByIdAsync(id, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "State/province fetched successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost]
@@ -40,7 +40,7 @@ public class StateProvincesController(IStateProvinceService service) : Controlle
         var result = await service.CreateAsync(request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "State/province created successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPut("{id}")]
@@ -49,7 +49,7 @@ public class StateProvincesController(IStateProvinceService service) : Controlle
         var result = await service.UpdateAsync(id, request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "State/province updated successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpDelete("{id}")]
@@ -58,6 +58,6 @@ public class StateProvincesController(IStateProvinceService service) : Controlle
         var result = await service.DeleteAsync(id, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("State/province deleted successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 }

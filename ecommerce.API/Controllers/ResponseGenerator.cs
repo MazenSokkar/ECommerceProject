@@ -24,14 +24,4 @@ public static class ResponseGenerator
             IsSuccess = true
         };
     }
-
-    public static APIResponse<T> GenerateFailureResponse<T>(string message) where T : class
-    {
-        return new APIResponse<T>
-        {
-            Data = null,
-            Message = message,
-            IsSuccess = false
-        };
-    }
 }

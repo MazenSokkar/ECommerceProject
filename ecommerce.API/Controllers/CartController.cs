@@ -38,7 +38,7 @@ public class CartController(ICartService cartService) : ControllerBase
 
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Cart fetched successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost("items")]
@@ -56,7 +56,7 @@ public class CartController(ICartService cartService) : ControllerBase
 
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Item added to cart successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [Authorize(Roles = DefaultRoles.Customer)]
@@ -75,7 +75,7 @@ public class CartController(ICartService cartService) : ControllerBase
 
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Cart item updated successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [Authorize(Roles = DefaultRoles.Customer)]
@@ -92,7 +92,7 @@ public class CartController(ICartService cartService) : ControllerBase
 
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Item removed successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [Authorize(Roles = DefaultRoles.Customer)]
@@ -106,6 +106,6 @@ public class CartController(ICartService cartService) : ControllerBase
 
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Cart cleared successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 }

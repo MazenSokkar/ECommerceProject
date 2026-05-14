@@ -17,7 +17,7 @@ public class AuthController(IAuthService authService) : ControllerBase
 
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Registration successful. Please check your email to confirm your account."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost("confirm-email")]
@@ -27,7 +27,7 @@ public class AuthController(IAuthService authService) : ControllerBase
 
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Email confirmed successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost("login")]
@@ -37,7 +37,7 @@ public class AuthController(IAuthService authService) : ControllerBase
 
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Login successful."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost("logout")]
@@ -56,7 +56,7 @@ public class AuthController(IAuthService authService) : ControllerBase
 
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Logged out successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost("forgot-password")]
@@ -67,7 +67,7 @@ public class AuthController(IAuthService authService) : ControllerBase
         return result.IsSuccess
             // Always return success even if user not found to prevent enumeration
             ? Ok(ResponseGenerator.GenerateSuccessResponse("If your email is registered, you will receive an OTP shortly."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost("reset-password")]
@@ -77,6 +77,6 @@ public class AuthController(IAuthService authService) : ControllerBase
 
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Password reset successfully. You can now login with your new password."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 }

@@ -29,7 +29,7 @@ public class ProductsController(IProductService service) : ControllerBase
         var result = await service.GetAllAsync(search, categoryId, minPrice, maxPrice, page, pageSize, sortBy, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Products fetched successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpGet("{id}")]
@@ -38,7 +38,7 @@ public class ProductsController(IProductService service) : ControllerBase
         var result = await service.GetByIdAsync(id, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Product fetched successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpGet("my-products")]
@@ -48,7 +48,7 @@ public class ProductsController(IProductService service) : ControllerBase
         var result = await service.GetMyProductsAsync(GetCurrentUserId(), cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Products fetched successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost]
@@ -58,7 +58,7 @@ public class ProductsController(IProductService service) : ControllerBase
         var result = await service.CreateAsync(GetCurrentUserId(), request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Product created successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPut("{id}")]
@@ -68,7 +68,7 @@ public class ProductsController(IProductService service) : ControllerBase
         var result = await service.UpdateAsync(GetCurrentUserId(), id, request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Product updated successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpDelete("{id}")]
@@ -78,7 +78,7 @@ public class ProductsController(IProductService service) : ControllerBase
         var result = await service.DeleteAsync(GetCurrentUserId(), id, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Product deleted successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPut("{id}/stock")]
@@ -88,6 +88,6 @@ public class ProductsController(IProductService service) : ControllerBase
         var result = await service.UpdateStockAsync(GetCurrentUserId(), id, request, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Stock updated successfully."))
-            : result.ToProblem(result.Error.statusCode ?? StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 }
