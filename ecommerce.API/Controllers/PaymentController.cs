@@ -12,13 +12,8 @@ namespace ecommerce.API.Controllers;
 public class PaymentController(IPaymentService paymentService) : ControllerBase
 {
     private int GetUserId()
-    {
-        var id = User.FindFirst("sub")?.Value;
-
-        return int.TryParse(id, out var userId)
-            ? userId
-            : throw new UnauthorizedAccessException();
-    }
+    => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+   
 
     [HttpPost]
     public async Task<IActionResult> CreatePayment(
@@ -58,6 +53,22 @@ public class PaymentController(IPaymentService paymentService) : ControllerBase
         var result = await paymentService.GetMyPaymentsAsync(
             GetUserId(),
             cancellationToken);
+
+        return Ok(result.Value);
+    }
+
+    [HttpPost("stripe/create-intent")]
+    public async Task<IActionResult> CreateStripeIntent(
+    [FromBody] CreateStripeIntentRequest request,
+    CancellationToken cancellationToken)
+    {
+        var result = await paymentService.CreateStripeIntentAsync(
+            GetUserId(),
+            request.OrderId,
+            cancellationToken);
+
+        if (!result.IsSuccess)
+            return BadRequest(result.Error.Description);
 
         return Ok(result.Value);
     }

@@ -41,6 +41,26 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/merchant/merchant.routes').then(m => m.MERCHANT_ROUTES),
       },
+      {
+      path: 'cart',
+      loadChildren: () =>
+          import('./features/cart/Cart.routes').then(c=>c.CART_ROUTES),
+      },
+      {
+  path: 'orders',
+  loadChildren: () =>
+    import('./features/orders/orders.routes').then(m => m.ORDERS_ROUTES),
+},
+{
+  path: 'payment',
+  loadChildren: () =>
+    import('./features/payments/payments.routes').then(m => m.PAYMENTS_ROUTES),
+},
+{
+  path: 'shipping',
+  loadChildren: () =>
+    import('./features/shipping/shipping.routes').then(m => m.SHIPPING_ROUTES),
+},
     ],
   },
 

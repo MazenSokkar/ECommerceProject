@@ -85,4 +85,12 @@ export class AuthService {
       return null;
     }
   }
+
+  getUserId(): number | null {
+  const decoded = this._decoded();
+  if (!decoded?.sub) return null;
+
+  return Number(decoded.sub);
+}
+
 }

@@ -1,0 +1,240 @@
+<!-- src/app/features/cart/components/cart-page/cart-page.html -->
+
+<div class="space-y-6">
+
+  <!-- Page Header -->
+  <div class="page-header rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-extrabold text-white tracking-tight">My Cart</h1>
+      <p class="text-teal-200 text-sm mt-0.5">
+        @if (!isLoading() && !isEmpty()) {
+          {{ itemsCount() }} {{ itemsCount() === 1 ? 'item' : 'items' }} in your cart
+        } @else {
+          Review your selected items
+        }
+      </p>
+    </div>
+    @if (!isEmpty()) {
+      <button
+        class="btn-accent self-start sm:self-auto px-5 py-2.5 rounded-xl text-sm font-bold"
+        [disabled]="isClearing()"
+        (click)="clearCart()">
+        @if (isClearing()) {
+          <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+          </svg>
+        } @else {
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4h6v3M3 7h18"/>
+          </svg>
+          Clear Cart
+        }
+      </button>
+    }
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="flex items-center justify-center py-24">
+      <svg class="animate-spin w-10 h-10 text-[#0E7C7B]" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+      </svg>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error() && !isLoading()) {
+    <div class="section-card p-6 text-center">
+      <p class="text-[#DC2626] font-medium">{{ error() }}</p>
+      <button class="btn-primary mt-4 px-6 py-2.5" (click)="ngOnInit()">Retry</button>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (isEmpty() && !isLoading() && !error()) {
+    <div class="section-card card-stripe flex flex-col items-center justify-center py-24 gap-4">
+      <div class="empty-icon-box">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m5-9v9m4-9v9m5-9l2 9"/>
+        </svg>
+      </div>
+      <p class="text-neutral-400 text-base font-medium">Your cart is empty</p>
+      <a routerLink="/app/products" class="btn-primary px-6 py-2.5 mt-2">Browse Products</a>
+    </div>
+  }
+
+  <!-- Cart Content -->
+  @if (!isEmpty() && !isLoading()) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Items List — takes 2 cols -->
+      <div class="lg:col-span-2 space-y-4">
+
+        <!-- Desktop Table -->
+        <div class="data-card hidden sm:block overflow-hidden">
+          <table class="w-full">
+            <thead class="table-head">
+              <tr>
+                <th class="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-white">Product</th>
+                <th class="px-5 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white">Qty</th>
+                <th class="px-5 py-3.5 text-right text-xs font-bold uppercase tracking-wider text-white">Price</th>
+                <th class="px-5 py-3.5 text-right text-xs font-bold uppercase tracking-wider text-white">Subtotal</th>
+                <th class="px-5 py-3.5"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-100">
+              @for (item of cart()!.items; track item.productId) {
+                <tr class="cart-row" [class.cart-row--removing]="removingProductId() === item.productId">
+                  <!-- Product -->
+                  <td class="px-5 py-4">
+                    <div class="flex items-center gap-3">
+                      @if (item.productImage) {
+                        <img [src]="item.productImage" [alt]="item.productName"
+                          class="w-12 h-12 rounded-lg object-cover border border-neutral-100 flex-shrink-0"/>
+                      } @else {
+                        <div class="w-12 h-12 rounded-lg bg-neutral-100 flex items-center justify-center flex-shrink-0">
+                          <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/>
+                          </svg>
+                        </div>
+                      }
+                      <span class="font-semibold text-neutral-800 text-sm">{{ item.productName }}</span>
+                    </div>
+                  </td>
+
+                  <!-- Qty -->
+                  <td class="px-5 py-4">
+                    <div class="flex items-center justify-center gap-2">
+                      <button class="qty-btn" [disabled]="updatingProductId() === item.productId || item.quantity <= 1"
+                        (click)="updateQuantity(item, -1)">−</button>
+                      <span class="w-8 text-center font-bold text-sm text-neutral-800">
+                        @if (updatingProductId() === item.productId) {
+                          <svg class="animate-spin w-4 h-4 mx-auto text-[#0E7C7B]" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                          </svg>
+                        } @else {
+                          {{ item.quantity }}
+                        }
+                      </span>
+                      <button class="qty-btn" [disabled]="updatingProductId() === item.productId"
+                        (click)="updateQuantity(item, 1)">+</button>
+                    </div>
+                  </td>
+
+                  <!-- Unit Price -->
+                  <td class="px-5 py-4 text-right text-sm text-neutral-600">
+                    ${{ item.unitPrice | number:'1.2-2' }}
+                  </td>
+
+                  <!-- Subtotal -->
+                  <td class="px-5 py-4 text-right font-bold text-neutral-800 text-sm">
+                    ${{ item.subtotal | number:'1.2-2' }}
+                  </td>
+
+                  <!-- Remove -->
+                  <td class="px-5 py-4 text-right">
+                    <button class="remove-btn" [disabled]="removingProductId() === item.productId"
+                      (click)="removeItem(item.productId)">
+                      @if (removingProductId() === item.productId) {
+                        <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                        </svg>
+                      } @else {
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                      }
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Cards -->
+        <ul class="sm:hidden space-y-3">
+          @for (item of cart()!.items; track item.productId) {
+            <li class="section-card p-4 space-y-3"
+              [class.opacity-50]="removingProductId() === item.productId">
+              <div class="flex items-start gap-3">
+                @if (item.productImage) {
+                  <img [src]="item.productImage" [alt]="item.productName"
+                    class="w-14 h-14 rounded-lg object-cover border border-neutral-100 flex-shrink-0"/>
+                } @else {
+                  <div class="w-14 h-14 rounded-lg bg-neutral-100 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/>
+                    </svg>
+                  </div>
+                }
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-neutral-800 text-sm truncate">{{ item.productName }}</p>
+                  <p class="text-neutral-400 text-xs mt-0.5">${{ item.unitPrice | number:'1.2-2' }} each</p>
+                </div>
+                <button class="remove-btn" (click)="removeItem(item.productId)"
+                  [disabled]="removingProductId() === item.productId">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <button class="qty-btn" [disabled]="updatingProductId() === item.productId || item.quantity <= 1"
+                    (click)="updateQuantity(item, -1)">−</button>
+                  <span class="w-8 text-center font-bold text-sm">{{ item.quantity }}</span>
+                  <button class="qty-btn" [disabled]="updatingProductId() === item.productId"
+                    (click)="updateQuantity(item, 1)">+</button>
+                </div>
+                <span class="font-bold text-neutral-800">${{ item.subtotal | number:'1.2-2' }}</span>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Order Summary Card -->
+      <div class="section-card card-stripe h-fit p-5 sm:p-6 space-y-4">
+        <h2 class="text-base font-bold text-neutral-800">Order Summary</h2>
+
+        <div class="space-y-2.5 text-sm">
+          <div class="flex justify-between text-neutral-600">
+            <span>Items ({{ itemsCount() }})</span>
+            <span>${{ totalAmount() | number:'1.2-2' }}</span>
+          </div>
+          <div class="flex justify-between text-neutral-600">
+            <span>Shipping</span>
+            <span class="text-[#059669] font-medium">Calculated at checkout</span>
+          </div>
+          <div class="border-t border-neutral-100 pt-2.5 flex justify-between font-bold text-neutral-800 text-base">
+            <span>Total</span>
+            <span>${{ totalAmount() | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <button class="btn-primary w-full py-3 text-base" (click)="checkout()">
+          Proceed to Checkout
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+
+        <a routerLink="/app/products"
+          class="block text-center text-sm text-[#0E7C7B] font-medium hover:underline">
+          ← Continue Shopping
+        </a>
+      </div>
+
+    </div>
+  }
+
+</div>

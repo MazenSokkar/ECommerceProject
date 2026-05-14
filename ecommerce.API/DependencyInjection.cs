@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Text;
 using ecommerce.Contracts;
 using ecommerce.Core.Entities;
 using ecommerce.Core.IRepositories;
@@ -15,8 +17,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using System.Reflection;
-using System.Text;
+using Stripe;
+using ecommerce.Infrastructure.Services;
+using OrderService = ecommerce.Infrastructure.Services.OrderService;
+using ProductService = ecommerce.Infrastructure.Services.ProductService;
+using ReviewService = ecommerce.Infrastructure.Services.ReviewService;
 
 namespace ecommerce.API;
 
@@ -98,6 +103,8 @@ public static class DependencyInjection
     {
         services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
         services.Configure<AuthSettings>(configuration.GetSection("AuthSettings"));
+        services.Configure<StripeOptions>(configuration.GetSection("Stripe"));
+        Stripe.StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"]!;
 
         services.AddScoped<IJwtProvider, JwtProvider>();
         services.AddTransient<IEmailBodyBuilder, EmailBodyBuilder>();
@@ -113,6 +120,7 @@ public static class DependencyInjection
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IReviewService, ReviewService>();
         services.AddScoped<IWishlistService, WishlistService>();
+
 
 
 
@@ -143,6 +151,7 @@ public static class DependencyInjection
         services.AddSerilog((sp, lc) =>
             lc.ReadFrom.Configuration(sp.GetRequiredService<IConfiguration>())
         );
+
 
         return services;
     }

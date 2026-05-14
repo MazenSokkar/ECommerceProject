@@ -1,0 +1,146 @@
+<!-- src/app/features/orders/components/checkout-page/checkout-page.html -->
+
+<div class="space-y-6">
+
+  <!-- Page Header -->
+  <div class="page-header rounded-2xl p-5 sm:p-6">
+    <h1 class="text-2xl font-extrabold text-white tracking-tight">Checkout</h1>
+    <p class="text-teal-200 text-sm mt-0.5">Complete your order</p>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoadingCart() || isLoadingAddresses()) {
+    <div class="flex items-center justify-center py-24">
+      <svg class="animate-spin w-10 h-10 text-[#0E7C7B]" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+      </svg>
+    </div>
+  }
+
+  @if (!isLoadingCart() && !isLoadingAddresses()) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Left: Address + Notes -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- Shipping Address -->
+        <div class="section-card card-stripe p-5 sm:p-6 space-y-4">
+          <h2 class="text-base font-bold text-neutral-800 dark:text-neutral-100">
+            Shipping Address
+          </h2>
+
+          @if (addresses().length === 0) {
+            <div class="flex flex-col items-center py-8 gap-3">
+              <div class="empty-icon-box">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </div>
+              <p class="text-neutral-400 text-sm">No addresses found. Please add an address first.</p>
+            </div>
+          } @else {
+            <div class="space-y-3">
+              @for (address of addresses(); track address.id) {
+               <div class="address-card" [class.address-card--selected]="selectedAddressId() === address.id"
+  (click)="selectAddress(address.id)">
+  <div class="flex items-start gap-3">
+    <div class="radio-dot mt-0.5" [class.radio-dot--selected]="selectedAddressId() === address.id"></div>
+    <div>
+      <p class="font-semibold text-neutral-800 dark:text-neutral-100 text-sm">
+        {{ address.locationName }}
+      </p>
+    </div>
+  </div>
+</div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Notes -->
+        <div class="section-card p-5 sm:p-6 space-y-3">
+          <h2 class="text-base font-bold text-neutral-800 dark:text-neutral-100">Order Notes</h2>
+          <textarea
+            class="form-input h-24 resize-none"
+            placeholder="Any special instructions? (optional)"
+            [value]="notes()"
+            (input)="notes.set($any($event.target).value)">
+          </textarea>
+        </div>
+
+      </div>
+
+      <!-- Right: Order Summary -->
+      <div class="space-y-4">
+        <div class="section-card card-stripe p-5 sm:p-6 space-y-4">
+          <h2 class="text-base font-bold text-neutral-800 dark:text-neutral-100">Order Summary</h2>
+
+          <!-- Items -->
+          <div class="space-y-3 max-h-64 overflow-y-auto">
+            @for (item of cart()!.items; track item.productId) {
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                  @if (item.productImage) {
+                    <img [src]="item.productImage" [alt]="item.productName" class="w-full h-full object-cover"/>
+                  } @else {
+                    <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/>
+                    </svg>
+                  }
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-neutral-800 dark:text-neutral-100 truncate">{{ item.productName }}</p>
+                  <p class="text-xs text-neutral-400">x{{ item.quantity }}</p>
+                </div>
+                <span class="text-sm font-bold text-neutral-800 dark:text-neutral-100 flex-shrink-0">
+                  ${{ item.subtotal | number:'1.2-2' }}
+                </span>
+              </div>
+            }
+          </div>
+
+          <div class="border-t border-neutral-100 dark:border-neutral-700 pt-3 space-y-2 text-sm">
+            <div class="flex justify-between text-neutral-600 dark:text-neutral-400">
+              <span>Items ({{ itemsCount() }})</span>
+              <span>${{ totalAmount() | number:'1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between text-neutral-600 dark:text-neutral-400">
+              <span>Shipping</span>
+              <span class="text-[#059669] font-medium">Free</span>
+            </div>
+            <div class="flex justify-between font-bold text-neutral-800 dark:text-neutral-100 text-base pt-1 border-t border-neutral-100 dark:border-neutral-700">
+              <span>Total</span>
+              <span>${{ totalAmount() | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <button class="btn-primary w-full py-3 text-base"
+            [disabled]="!canPlaceOrder()"
+            (click)="placeOrder()">
+            @if (isPlacingOrder()) {
+              <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+              </svg>
+              Placing Order...
+            } @else {
+              Place Order
+            }
+          </button>
+
+          <a routerLink="/app/cart"
+            class="block text-center text-sm text-[#0E7C7B] font-medium hover:underline">
+            ← Back to Cart
+          </a>
+        </div>
+      </div>
+
+    </div>
+  }
+
+</div>

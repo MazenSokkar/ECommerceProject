@@ -1,1 +1,56 @@
 :host { display: block; }
+
+
+
+/* ── Cart Icon Button ─────────────────────────────────────────── */
+.cart-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  color: var(--color-neutral-600);
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cart-icon-btn:hover {
+  background: var(--color-neutral-100);
+  color: var(--color-primary);
+}
+
+/* ── Cart Badge ───────────────────────────────────────────────── */
+.cart-badge {
+  position: absolute;
+  top: 0.1rem;
+  right: 0.1rem;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 0.25rem;
+  border-radius: 9999px;
+  background: var(--color-danger);
+  color: #ffffff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  border: 1.5px solid #ffffff;
+}
+
+/* ── Dark mode ────────────────────────────────────────────────── */
+.dark .cart-icon-btn {
+  color: #94A3B8;
+}
+
+.dark .cart-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #14B8A6;
+}
+
+.dark .cart-badge {
+  border-color: #1E293B;
+}

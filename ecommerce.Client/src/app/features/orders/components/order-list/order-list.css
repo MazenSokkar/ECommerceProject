@@ -1,0 +1,91 @@
+/* ── Filter Tabs ─────────────────────────────────── */
+.filter-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1.5px solid var(--color-neutral-200);
+  background: #ffffff;
+  color: var(--color-neutral-600);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.filter-tab:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.filter-tab--active {
+  background: var(--color-primary) !important;
+  color: #ffffff !important;
+  border-color: var(--color-primary) !important;
+}
+
+.dark .filter-tab {
+  background: #1E293B;
+  border-color: #334155;
+  color: #94A3B8;
+}
+
+.dark .filter-tab:hover {
+  border-color: #14B8A6;
+  color: #14B8A6;
+}
+
+.dark .filter-tab--active {
+  background: #14B8A6 !important;
+  color: #0F172A !important;
+  border-color: #14B8A6 !important;
+}
+
+/* ── Status Badges ───────────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: #D97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.status-confirmed {
+  background: rgba(14, 124, 123, 0.1);
+  color: var(--color-primary);
+  border: 1px solid rgba(14, 124, 123, 0.2);
+}
+
+.status-processing {
+  background: rgba(99, 102, 241, 0.08);
+  color: #6366F1;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.status-shipped {
+  background: rgba(14, 165, 233, 0.1);
+  color: #0EA5E9;
+  border: 1px solid rgba(14, 165, 233, 0.2);
+}
+
+.status-delivered {
+  background: rgba(5, 150, 105, 0.1);
+  color: var(--color-success);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+}
+
+.status-cancelled {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--color-danger);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
