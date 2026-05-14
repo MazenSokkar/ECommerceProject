@@ -57,7 +57,7 @@ export class ConfirmEmail {
             roles: res.data.roles,
           };
           this.auth.setSession(res.data.token, profile);
-          this.toast.success('Success', 'Email confirmed! Welcome to GiftWave 🎉');
+          this.toast.success('Success', 'Email confirmed! Welcome to TechShop 🎉');
           this.router.navigate(['/app']);
         }
       },
