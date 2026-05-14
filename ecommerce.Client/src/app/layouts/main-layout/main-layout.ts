@@ -1,7 +1,7 @@
 // src/app/layouts/main-layout/main-layout.ts
 
 import { Component, computed, inject, signal, OnInit } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { AuthApiService } from '../../features/auth/services/auth-api.service';
 import { ThemeToggle } from '../../shared/components/theme-toggle/theme-toggle';
@@ -11,7 +11,7 @@ import { CartApiService } from '../../features/cart/services/cart-api-service';
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, ThemeToggle],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ThemeToggle],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.css',
 })
