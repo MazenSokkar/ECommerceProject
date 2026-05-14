@@ -25,6 +25,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAc
     public DbSet<Wishlist>  Wishlists { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
     public DbSet<WishlistItem> WishlistItems { get; set; }
+    public DbSet<Banner> Banners { get; set; }
     #region salah
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }

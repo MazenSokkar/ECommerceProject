@@ -1,0 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace ecommerce.Contracts.Banners;
+
+public record CreateBannerRequest(
+    [Required, MaxLength(100)] string Title,
+    [Required, MaxLength(500)] string ImageUrl,
+    [MaxLength(500)] string? LinkUrl,
+    bool IsActive,
+    int DisplayOrder
+);
