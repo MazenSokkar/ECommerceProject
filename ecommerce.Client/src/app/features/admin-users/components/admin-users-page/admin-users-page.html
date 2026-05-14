@@ -36,14 +36,10 @@
                         [errorMessages]="{ pattern: 'Enter a valid Egyptian mobile number (e.g. 1012345678).' }" />
                 </div>
 
-                    <ng-container *ngIf="!isEditing()">
-                        <app-password-input
-                            label="Password"
-                            autocomplete="new-password"
-                            [control]="form.controls.password"
-                            [required]="true"
-                        ></app-password-input>
-                    </ng-container>
+                @if (!isEditing()) {
+                <app-password-input label="Password" autocomplete="new-password" [control]="form.controls.password"
+                    [required]="true"></app-password-input>
+                }
 
                 <div class="border-t border-neutral-200 pt-4">
                     <h3 class="text-base font-semibold text-neutral-800 mb-3">Address</h3>
