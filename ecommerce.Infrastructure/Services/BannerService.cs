@@ -37,6 +37,7 @@ public class BannerService(IBannerRepository repository, IUnitOfWork unitOfWork)
         var banner = new Banner
         {
             Title = request.Title,
+            Content = request.Content,
             ImageUrl = request.ImageUrl,
             LinkUrl = request.LinkUrl ?? string.Empty,
             IsActive = request.IsActive,
@@ -62,6 +63,7 @@ public class BannerService(IBannerRepository repository, IUnitOfWork unitOfWork)
         }
 
         banner.Title = request.Title;
+        banner.Content = request.Content;
         banner.ImageUrl = request.ImageUrl;
         banner.LinkUrl = request.LinkUrl ?? string.Empty;
         banner.IsActive = request.IsActive;
@@ -97,7 +99,7 @@ public class BannerService(IBannerRepository repository, IUnitOfWork unitOfWork)
     }
 
     private static BannerResponse MapToResponse(Banner banner)
-        => new(banner.Id, banner.Title, banner.ImageUrl, banner.LinkUrl, banner.IsActive, banner.DisplayOrder);
+        => new(banner.Id, banner.Title, banner.Content, banner.ImageUrl, banner.LinkUrl, banner.IsActive, banner.DisplayOrder);
 
     private async Task ShiftOrdersAsync(int newOrder, int? oldOrder, int? currentBannerId, CancellationToken cancellationToken)
     {
