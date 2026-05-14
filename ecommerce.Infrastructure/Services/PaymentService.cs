@@ -75,6 +75,7 @@ public class PaymentService(
                 "payment-success",
                 new Dictionary<string, string>
                 {
+                    { "{{name}}", order.User.FirstName },
                     { "{{orderNumber}}", order.OrderNumber },
                     { "{{amount}}", order.Total.ToString() },
                     { "{{status}}", "Paid" }
