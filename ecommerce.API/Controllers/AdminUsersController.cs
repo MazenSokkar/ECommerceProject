@@ -48,6 +48,15 @@ public class AdminUsersController(IAdminUserService service) : ControllerBase
             : result.ToProblem();
     }
 
+    [HttpPut("{id:int}/status")]
+    public async Task<IActionResult> ToggleStatus(int id, CancellationToken cancellationToken)
+    {
+        var result = await service.ToggleActiveAsync(id, cancellationToken);
+        return result.IsSuccess
+            ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "User status updated successfully."))
+            : result.ToProblem();
+    }
+
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> SoftDelete(int id, CancellationToken cancellationToken)
     {

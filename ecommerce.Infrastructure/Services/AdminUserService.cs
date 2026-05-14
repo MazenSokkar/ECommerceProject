@@ -135,6 +135,36 @@ public class AdminUserService(
         return Result.Success(MapUser(user));
     }
 
+    public async Task<Result<AdminUserResponse>> ToggleActiveAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var user = await _authRepository.FindByIdAsync(id.ToString());
+        if (user is null || user.Deleted)
+            return Result.Failure<AdminUserResponse>(UserErrors.UserNotFound);
+
+        var roles = await _authRepository.GetRolesAsync(user);
+        if (!roles.Contains(DefaultRoles.Customer))
+            return Result.Failure<AdminUserResponse>(UserErrors.Forbidden);
+
+        user.Active = !user.Active;
+
+        var updateResult = await _authRepository.UpdateUserAsync(user);
+        if (!updateResult.Succeeded)
+            return Result.Failure<AdminUserResponse>(UserErrors.UpdateFailed);
+
+        if (!user.Active)
+        {
+            var merchant = await _merchantRepository.FindByUserIdAsync(user.Id, cancellationToken);
+            if (merchant is not null && !merchant.Deleted && merchant.Active)
+            {
+                merchant.Active = false;
+                _merchantRepository.Update(merchant);
+                await _unitOfWork.Complete();
+            }
+        }
+
+        return Result.Success(MapUser(user));
+    }
+
     public async Task<Result> SoftDeleteAsync(int id, CancellationToken cancellationToken = default)
     {
         var user = await _authRepository.FindByIdAsync(id.ToString());
