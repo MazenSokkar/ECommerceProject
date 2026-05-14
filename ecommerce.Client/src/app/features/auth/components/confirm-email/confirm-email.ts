@@ -1,6 +1,5 @@
 import { Component, ViewChild, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthApiService } from '../../services/auth-api.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { OtpInput } from '../../../../shared/components/otp-input/otp-input';
@@ -9,6 +8,7 @@ import { Card } from '../../../../shared/components/card/card';
 import { IconHeader } from '../../../../shared/components/icon-header/icon-header';
 import { Button } from '../../../../shared/components/button/button';
 import { ResendCode } from '../../../../shared/components/resend-code/resend-code';
+import { AuthApiService } from '../../services/auth-api.service';
 
 @Component({
   selector: 'app-confirm-email',

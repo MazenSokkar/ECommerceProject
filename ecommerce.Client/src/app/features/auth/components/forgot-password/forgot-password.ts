@@ -13,7 +13,16 @@ import { ResendCode } from '../../../../shared/components/resend-code/resend-cod
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, OtpInput, Card, FormField, PasswordInput, Button, ResendCode],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    OtpInput,
+    Card,
+    FormField,
+    PasswordInput,
+    Button,
+    ResendCode,
+  ],
   templateUrl: './forgot-password.html',
   styleUrl: './forgot-password.css',
 })

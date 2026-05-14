@@ -1,0 +1,73 @@
+<div class="space-y-8">
+  <!-- Banners Slider -->
+  @if (loading()) {
+    <div class="w-full h-64 sm:h-80 md:h-100 bg-neutral-100 dark:bg-slate-800 rounded-2xl animate-pulse flex items-center justify-center shadow-sm">
+      <i class="lni lni-spinner-solid animate-spin text-4xl text-primary"></i>
+    </div>
+  } @else if (banners().length > 0) {
+    <div class="relative w-full h-64 sm:h-80 md:h-100 rounded-2xl overflow-hidden group shadow-md bg-neutral-900">
+      @for (banner of banners(); track banner.id; let i = $index) {
+        <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+             [class.opacity-100]="i === activeIndex()"
+             [class.opacity-0]="i !== activeIndex()"
+             [class.z-10]="i === activeIndex()">
+          <img [src]="banner.imageUrl" [alt]="banner.title" class="w-full h-full object-cover" />
+          
+          <!-- Overlay -->
+          <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent flex items-end">
+             <div class="p-6 sm:p-10 w-full md:w-2/3">
+                <h2 class="text-3xl sm:text-5xl font-extrabold text-white mb-2 tracking-tight drop-shadow-md">{{ banner.title }}</h2>
+                @if (banner.content) {
+                    <p class="text-neutral-200 text-lg sm:text-xl mb-6 line-clamp-2 drop-shadow">{{ banner.content }}</p>
+                }
+                @if (banner.linkUrl) {
+                    <a [href]="banner.linkUrl" target="_blank" class="btn-primary inline-block px-8 py-3 rounded-xl text-sm sm:text-base font-bold text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">Discover More</a>
+                }
+             </div>
+          </div>
+        </div>
+      }
+
+      <!-- Controls -->
+      @if (banners().length > 1) {
+        <button (click)="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-md flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-lg">
+            <i class="lni lni-chevron-left text-lg"></i>
+        </button>
+        <button (click)="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-md flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-lg">
+            <i class="lni lni-chevron-right text-lg"></i>
+        </button>
+
+        <!-- Dots -->
+        <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+            @for (banner of banners(); track banner.id; let i = $index) {
+                <button (click)="activeIndex.set(i)" class="w-2.5 h-2.5 rounded-full transition-all shadow-sm"
+                        [class.bg-white]="i === activeIndex()"
+                        [class.w-8]="i === activeIndex()"
+                        [class.bg-white/50]="i !== activeIndex()"></button>
+            }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Welcome / CTA Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="section-card p-8 sm:p-10 flex flex-col justify-center items-start border border-neutral-100 dark:border-slate-700 bg-white dark:bg-slate-800">
+       <div class="w-14 h-14 rounded-xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center mb-6">
+         <i class="lni lni-shopping-basket text-2xl text-primary"></i>
+       </div>
+       <h4 class="text-2xl font-extrabold text-neutral-800 dark:text-slate-100 mb-3">Ready to shop?</h4>
+       <p class="text-neutral-500 dark:text-slate-400 mb-8 text-lg">Explore our wide range of products and find exactly what you're looking for.</p>
+       <app-button routerLink="/app/products" variant="primary" class="w-full sm:w-auto">Browse Products</app-button>
+    </div>
+
+    <div class="section-card p-8 sm:p-10 flex flex-col justify-center items-start border border-neutral-100 dark:border-slate-700 bg-white dark:bg-slate-800">
+       <div class="w-14 h-14 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center mb-6">
+         <i class="lni lni-heart text-2xl text-secondary"></i>
+       </div>
+       <h4 class="text-2xl font-extrabold text-neutral-800 dark:text-slate-100 mb-3">Your Wishlist</h4>
+       <p class="text-neutral-500 dark:text-slate-400 mb-8 text-lg">Save your favorite items and track their availability easily.</p>
+       <app-button routerLink="/app/wishlist" variant="outline" class="w-full sm:w-auto">View Wishlist</app-button>
+    </div>
+  </div>
+</div>

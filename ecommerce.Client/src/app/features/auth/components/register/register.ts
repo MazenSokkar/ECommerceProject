@@ -52,10 +52,7 @@ export class Register {
   protected readonly loadingStates = signal(false);
   protected readonly loadingCities = signal(false);
 
-  protected readonly registerSteps = [
-    { label: 'Personal Info' },
-    { label: 'Address' },
-  ];
+  protected readonly registerSteps = [{ label: 'Personal Info' }, { label: 'Address' }];
 
   protected readonly form = new FormGroup(
     {
@@ -135,7 +132,14 @@ export class Register {
   }
 
   protected goToStep2(): void {
-    const step1Controls = ['firstName', 'lastName', 'email', 'phone', 'password', 'confirmPassword'];
+    const step1Controls = [
+      'firstName',
+      'lastName',
+      'email',
+      'phone',
+      'password',
+      'confirmPassword',
+    ];
     step1Controls.forEach((name) => this.form.get(name)?.markAsTouched());
     const step1Invalid = step1Controls.some((name) => this.form.get(name)?.invalid);
     if (step1Invalid || this.form.hasError('passwordMismatch')) return;

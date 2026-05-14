@@ -14,7 +14,16 @@ import { Button } from '../../../../shared/components/button/button';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, Card, TabSwitcher, FormField, PasswordInput, AlertBanner, Button],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    Card,
+    TabSwitcher,
+    FormField,
+    PasswordInput,
+    AlertBanner,
+    Button,
+  ],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -72,46 +81,44 @@ export class Login {
     const raw = this.form.value.identifier!;
     const identifier = this.loginMode() === 'phone' ? `+20${raw}` : raw;
 
-    this.authApi
-      .login({ identifier, password: this.form.value.password! })
-      .subscribe({
-        next: (res) => {
-          this.loading.set(false);
-          if (res.isSuccess && res.data) {
-            this.failedAttempts.set(0);
-            const profile: UserProfile = {
-              firstName: res.data.firstName,
-              lastName: res.data.lastName,
-              email: res.data.email,
-              roles: res.data.roles,
-            };
-            this.auth.setSession(res.data.token, profile);
-            this.router.navigate(['/app']);
-          }
-        },
-        error: (err) => {
-          this.loading.set(false);
-          this.failedAttempts.update((n) => n + 1);
+    this.authApi.login({ identifier, password: this.form.value.password! }).subscribe({
+      next: (res) => {
+        this.loading.set(false);
+        if (res.isSuccess && res.data) {
+          this.failedAttempts.set(0);
+          const profile: UserProfile = {
+            firstName: res.data.firstName,
+            lastName: res.data.lastName,
+            email: res.data.email,
+            roles: res.data.roles,
+          };
+          this.auth.setSession(res.data.token, profile);
+          this.router.navigate(['/app']);
+        }
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.failedAttempts.update((n) => n + 1);
 
-          if (
-            err.status === 429 ||
-            (err.status === 400 && err.error?.detail?.toLowerCase().includes('lockout'))
-          ) {
-            this.lockedUntil.set(new Date(Date.now() + 15 * 60 * 1000));
-            return;
-          }
+        if (
+          err.status === 429 ||
+          (err.status === 400 && err.error?.detail?.toLowerCase().includes('lockout'))
+        ) {
+          this.lockedUntil.set(new Date(Date.now() + 15 * 60 * 1000));
+          return;
+        }
 
-          const detail: string = err.error?.detail ?? err.error?.title ?? '';
+        const detail: string = err.error?.detail ?? err.error?.title ?? '';
 
-          if (
-            detail.toLowerCase().includes('confirm') ||
-            detail.toLowerCase().includes('not confirmed')
-          ) {
-            this.router.navigate(['/confirm-email'], {
-              queryParams: { email: identifier },
-            });
-          }
-        },
-      });
+        if (
+          detail.toLowerCase().includes('confirm') ||
+          detail.toLowerCase().includes('not confirmed')
+        ) {
+          this.router.navigate(['/confirm-email'], {
+            queryParams: { email: identifier },
+          });
+        }
+      },
+    });
   }
 }

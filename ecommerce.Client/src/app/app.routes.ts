@@ -26,6 +26,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
+        path: '',
+        loadChildren: () =>
+          import('./features/home/home.routes').then((m) => m.HOME_ROUTES),
+      },
+      {
         path: 'products',
         loadChildren: () =>
           import('./features/products/products.routes').then((m) => m.PRODUCTS_ROUTES),
@@ -46,10 +51,10 @@ export const routes: Routes = [
           import('./features/merchant/merchant.routes').then((m) => m.MERCHANT_ROUTES),
       },
       {
-        path: 'admin/users',
+        path: 'admin',
         canActivate: [roleGuard(ROLES.Admin)],
         loadChildren: () =>
-          import('./features/admin-users/admin-users.routes').then((m) => m.ADMIN_USERS_ROUTES),
+          import('./features/admin-dashboard/admin-dashboard.routes').then((m) => m.ADMIN_DASHBOARD_ROUTES),
       },
       {
         path: 'cart',
