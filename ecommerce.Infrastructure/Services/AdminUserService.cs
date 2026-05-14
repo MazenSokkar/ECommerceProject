@@ -17,6 +17,7 @@ public class AdminUserService(
     ICountryRepository countryRepository,
     IStateProvinceRepository stateProvinceRepository,
     ICityRepository cityRepository,
+    IMerchantRepository merchantRepository,
     IUnitOfWork unitOfWork) : IAdminUserService
 {
     private readonly IAuthRepository _authRepository = authRepository;
@@ -24,6 +25,7 @@ public class AdminUserService(
     private readonly ICountryRepository _countryRepository = countryRepository;
     private readonly IStateProvinceRepository _stateProvinceRepository = stateProvinceRepository;
     private readonly ICityRepository _cityRepository = cityRepository;
+    private readonly IMerchantRepository _merchantRepository = merchantRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<Result<AdminUsersByRoleResponse>> GetAllAsync(bool includeDeleted = false, CancellationToken cancellationToken = default)
@@ -149,6 +151,15 @@ public class AdminUserService(
         var updateResult = await _authRepository.UpdateUserAsync(user);
         if (!updateResult.Succeeded)
             return Result.Failure(UserErrors.UpdateFailed);
+
+        var merchant = await _merchantRepository.FindByUserIdAsync(user.Id, cancellationToken);
+        if (merchant is not null && !merchant.Deleted)
+        {
+            merchant.Deleted = true;
+            merchant.Active = false;
+            _merchantRepository.Update(merchant);
+            await _unitOfWork.Complete();
+        }
 
         return Result.Success();
     }
