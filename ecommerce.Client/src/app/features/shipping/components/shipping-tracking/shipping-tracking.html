@@ -1,0 +1,176 @@
+<!-- src/app/features/shipping/components/shipping-tracking/shipping-tracking.html -->
+
+<div class="space-y-6">
+
+  <!-- Page Header -->
+  <div class="page-header rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-white tracking-tight">Track Shipment</h1>
+      <p class="text-teal-200 text-sm mt-0.5">Order #{{ orderId() }}</p>
+    </div>
+    <a [routerLink]="['/app/orders', orderId()]" class="btn-accent self-start sm:self-auto px-5 py-2.5 rounded-xl text-sm font-bold">
+      ← Back to Order
+    </a>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="flex justify-center items-center py-24">
+      <svg class="animate-spin w-8 h-8 text-[#0E7C7B]" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+      </svg>
+    </div>
+  }
+
+  <!-- Error / No Shipment -->
+  @if (!isLoading() && error()) {
+    <div class="section-card p-8 flex flex-col items-center gap-4 text-center">
+      <div class="empty-icon-box">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+        </svg>
+      </div>
+      <p class="text-neutral-500 dark:text-neutral-400 text-sm">{{ error() }}</p>
+      <p class="text-neutral-400 text-xs">The seller hasn't shipped your order yet. Check back soon!</p>
+    </div>
+  }
+
+  @if (!isLoading() && !error() && shipment()) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Left: Tracking Timeline -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- Returned Banner -->
+        @if (isReturned()) {
+          <div class="rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-5 flex items-center gap-4">
+            <span class="text-3xl">↩️</span>
+            <div>
+              <p class="font-bold text-red-700 dark:text-red-400">Order Returned</p>
+              <p class="text-sm text-red-500 dark:text-red-300 mt-0.5">This shipment has been returned.</p>
+            </div>
+          </div>
+        }
+
+        <!-- Timeline -->
+        <div class="section-card card-stripe p-5 sm:p-6">
+          <h2 class="text-base font-bold text-neutral-800 dark:text-neutral-100 mb-6">Tracking Timeline</h2>
+
+          <div class="relative">
+            @for (step of steps; track step.status; let i = $index; let last = $last) {
+              <div class="flex gap-4" [class.mb-6]="!last">
+
+                <!-- Icon + Line -->
+                <div class="flex flex-col items-center">
+                  <div class="step-icon" [class]="getStepClass(i)">
+                    <span class="text-lg">{{ step.icon }}</span>
+                  </div>
+                  @if (!last) {
+                    <div class="step-line" [class.step-line--active]="isStepCompleted(i + 1) || isStepActive(i + 1)"></div>
+                  }
+                </div>
+
+                <!-- Content -->
+                <div class="pb-2 flex-1">
+                  <p class="font-semibold text-sm" [class]="isStepActive(i) ? 'text-[#0E7C7B]' : isStepCompleted(i) ? 'text-neutral-800 dark:text-neutral-100' : 'text-neutral-400'">
+                    {{ step.label }}
+                  </p>
+                  <p class="text-xs text-neutral-400 mt-0.5">{{ step.description }}</p>
+
+                  @if (isStepActive(i)) {
+                    <span class="inline-flex items-center gap-1 mt-1.5 text-xs font-semibold text-[#0E7C7B] bg-teal-50 dark:bg-teal-900/20 px-2 py-0.5 rounded-full">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#0E7C7B] animate-pulse"></span>
+                      Current Status
+                    </span>
+                  }
+
+                  @if (step.status === 'Shipped' && shipment()!.shippedAt && isStepCompleted(i)) {
+                    <p class="text-xs text-neutral-400 mt-1">
+                      {{ shipment()!.shippedAt | date:'dd MMM yyyy, h:mm a' }}
+                    </p>
+                  }
+                  @if (step.status === 'Delivered' && shipment()!.deliveredAt && isStepCompleted(i)) {
+                    <p class="text-xs text-neutral-400 mt-1">
+                      {{ shipment()!.deliveredAt | date:'dd MMM yyyy, h:mm a' }}
+                    </p>
+                  }
+                </div>
+
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right: Shipment Info -->
+      <div>
+        <div class="section-card card-stripe p-5 sm:p-6 space-y-4 sticky top-4">
+          <h2 class="text-base font-bold text-neutral-800 dark:text-neutral-100">Shipment Details</h2>
+
+          <div class="space-y-3 text-sm">
+
+            <!-- Status -->
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-500 dark:text-neutral-400">Status</span>
+              <span class="font-semibold text-neutral-800 dark:text-neutral-100">
+                {{ shipment()!.status }}
+              </span>
+            </div>
+
+            <!-- Tracking Number -->
+            @if (shipment()!.trackingNumber) {
+              <div class="flex justify-between items-center">
+                <span class="text-neutral-500 dark:text-neutral-400">Tracking #</span>
+                <span class="font-mono text-xs font-semibold text-[#0E7C7B] bg-teal-50 dark:bg-teal-900/20 px-2 py-1 rounded-lg">
+                  {{ shipment()!.trackingNumber }}
+                </span>
+              </div>
+            }
+
+            <!-- Carrier -->
+            @if (shipment()!.carrier) {
+              <div class="flex justify-between items-center">
+                <span class="text-neutral-500 dark:text-neutral-400">Carrier</span>
+                <span class="font-semibold text-neutral-800 dark:text-neutral-100">
+                  {{ shipment()!.carrier }}
+                </span>
+              </div>
+            }
+
+            <!-- Shipped At -->
+            @if (shipment()!.shippedAt) {
+              <div class="flex justify-between items-center">
+                <span class="text-neutral-500 dark:text-neutral-400">Shipped</span>
+                <span class="text-neutral-700 dark:text-neutral-300">
+                  {{ shipment()!.shippedAt | date:'dd MMM yyyy' }}
+                </span>
+              </div>
+            }
+
+            <!-- Delivered At -->
+            @if (shipment()!.deliveredAt) {
+              <div class="flex justify-between items-center">
+                <span class="text-neutral-500 dark:text-neutral-400">Delivered</span>
+                <span class="text-[#059669] font-semibold">
+                  {{ shipment()!.deliveredAt | date:'dd MMM yyyy' }}
+                </span>
+              </div>
+            }
+
+          </div>
+
+          <div class="border-t border-neutral-100 dark:border-neutral-700 pt-4">
+            <a [routerLink]="['/app/orders', orderId()]" class="btn-primary w-full text-center py-2.5 text-sm">
+              View Order Details
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  }
+
+</div>

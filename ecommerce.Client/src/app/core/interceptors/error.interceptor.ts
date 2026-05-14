@@ -41,6 +41,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         toast.error('Error', 'An unexpected error occurred. Please try again.');
         return throwError(() => err);
       }
+      if (status >= 400) {
+  if (status === HttpStatusCode.NotFound) return throwError(() => err);
+  
+  const message = extractErrorMessage(err);
+  if (message) toast.error('Error', message);
+}
 
       // 4xx — extract ProblemDetails message and surface it as a toast,
       // then re-throw so individual components can still handle it.

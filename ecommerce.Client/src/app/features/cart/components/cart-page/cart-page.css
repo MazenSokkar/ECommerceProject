@@ -1,0 +1,90 @@
+/* src/app/features/cart/components/cart-page/cart-page.css */
+
+/* ── Quantity buttons ─────────────────────────────────────────── */
+.qty-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  border: 1.5px solid var(--color-neutral-200);
+  background: #ffffff;
+  color: var(--color-neutral-700);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  line-height: 1;
+}
+
+.qty-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(14, 124, 123, 0.05);
+}
+
+.qty-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Remove button ────────────────────────────────────────────── */
+.remove-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--color-neutral-400);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.remove-btn:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.08);
+  color: var(--color-danger);
+}
+
+.remove-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Table row ────────────────────────────────────────────────── */
+.cart-row {
+  transition: opacity 0.2s ease, background 0.15s ease;
+}
+
+.cart-row:hover {
+  background: var(--color-neutral-50);
+}
+
+.cart-row--removing {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ── Dark mode ────────────────────────────────────────────────── */
+.dark .qty-btn {
+  background: #1E293B;
+  border-color: #334155;
+  color: #CBD5E1;
+}
+
+.dark .qty-btn:hover:not(:disabled) {
+  border-color: #14B8A6;
+  color: #14B8A6;
+  background: rgba(20, 184, 166, 0.08);
+}
+
+.dark .cart-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.dark .remove-btn {
+  color: #475569;
+}

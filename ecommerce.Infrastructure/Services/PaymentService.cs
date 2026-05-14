@@ -4,6 +4,10 @@ using ecommerce.Contracts.Payment;
 using ecommerce.Core.Entities.salah_entities;
 using ecommerce.Core.IRepositories;
 using ecommerce.Core.IServices;
+using ecommerce.Infrastructure.Options;
+using Microsoft.Extensions.Options;
+using Stripe;
+using PaymentMethod = ecommerce.Core.Entities.salah_entities.PaymentMethod;
 
 namespace ecommerce.Infrastructure.Services;
 
@@ -11,8 +15,11 @@ public class PaymentService(
     IPaymentRepository paymentRepository,
     IOrderRepository orderRepository,
     IUnitOfWork unitOfWork,
-    IEmailService emailService) : IPaymentService
+    IEmailService emailService,
+    IOptions<StripeOptions> stripeOptions) : IPaymentService
 {
+    private readonly StripeOptions _stripe = stripeOptions.Value;
+
     public async Task<Result<PaymentResponse>> CreatePaymentAsync(
         int userId,
         CreatePaymentRequest request,
@@ -123,4 +130,41 @@ public class PaymentService(
             payment.TransactionId,
             payment.CreatedAt
         );
+
+
+
+    public async Task<Result<StripeIntentResponse>> CreateStripeIntentAsync(
+    int userId,
+    int orderId,
+    CancellationToken cancellationToken = default)
+    {
+        var order = await orderRepository.FindByIdAsync(orderId, cancellationToken);
+
+        if (order is null)
+            return Result.Failure<StripeIntentResponse>(PaymentErrors.OrderNotFound);
+
+        if (order.UserId != userId)
+            return Result.Failure<StripeIntentResponse>(PaymentErrors.Unauthorized);
+
+        var options = new PaymentIntentCreateOptions
+        {
+            Amount = (long)(order.Total * 100),
+            Currency = "usd",
+            AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+            {
+                Enabled = true
+            },
+            Metadata = new Dictionary<string, string>
+        {
+            { "orderId", orderId.ToString() }
+        }
+        };
+
+        var service = new Stripe.PaymentIntentService();
+        var intent = await service.CreateAsync(options, cancellationToken: cancellationToken);
+
+        return Result.Success(new StripeIntentResponse(intent.ClientSecret, _stripe.PublishableKey));
+    }
+
+
 }

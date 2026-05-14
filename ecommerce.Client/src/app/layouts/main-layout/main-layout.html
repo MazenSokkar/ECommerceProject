@@ -1,3 +1,4 @@
+
 <div class="min-h-screen bg-neutral-50 flex flex-col">
   <!-- Header -->
   <header class="bg-white border-b border-neutral-200 px-4 sm:px-6 h-16 flex items-center justify-between sticky top-0 z-30 shadow-sm">
@@ -9,38 +10,65 @@
       <span class="font-extrabold text-neutral-800 text-lg">GiftWave</span>
     </a>
 
-    <!-- Right: theme toggle + user menu -->
+
+    <!-- Right: theme toggle + cart + user menu -->
     <div class="flex items-center gap-2">
 
-    <app-theme-toggle />
+      <app-theme-toggle />
 
-    <div class="relative">
-      <button
-        (click)="toggleUserMenu()"
-        class="flex items-center gap-2 rounded-xl px-3 py-2 hover:bg-neutral-100 transition-colors"
-      >
-        <div class="avatar-circle w-8 h-8 text-sm">{{ initials() }}</div>
-        <span class="hidden sm:block text-sm font-medium text-neutral-700">{{ displayName() }}</span>
-        <i class="lni lni-chevron-down text-neutral-400 text-sm"></i>
-      </button>
-
-      @if (userMenuOpen()) {
-        <div class="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-lg border border-neutral-100 py-1 z-50">
-          <div class="px-3 py-2 border-b border-neutral-100 mb-1">
-            <p class="text-xs font-semibold text-neutral-800 truncate">{{ displayName() }}</p>
-            <p class="text-xs text-neutral-400 truncate">{{ profile()?.email }}</p>
-          </div>
-          <button
-            (click)="onLogout()"
-            [disabled]="loggingOut()"
-            class="w-full text-left px-3 py-2 text-sm text-danger hover:bg-red-50 transition-colors flex items-center gap-2 disabled:opacity-50"
-          >
-            <i class="lni lni-exit text-sm"></i>
-            {{ loggingOut() ? 'Logging out…' : 'Logout' }}
-          </button>
-        </div>
+          <!-- Nav Links -->
+@if (isCustomer()) {
+  <a routerLink="/app/orders" routerLinkActive="active" class="text-sm font-medium text-neutral-600 hover:text-[#0E7C7B] transition-colors">
+    My Orders
+  </a>
+}
+@if (isAdmin()) {
+  <a routerLink="/app/orders" routerLinkActive="active" class="text-sm font-medium text-neutral-600 hover:text-[#0E7C7B] transition-colors">
+    All Orders
+  </a>
+}
+      <!-- Cart Icon (Customer only) -->
+      @if (isCustomer()) {
+        <a routerLink="/app/cart" class="cart-icon-btn relative">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m5-9v9m4-9v9m5-9l2 9"/>
+          </svg>
+          @if (cartCount() > 0) {
+            <span class="cart-badge">{{ cartCount() > 99 ? '99+' : cartCount() }}</span>
+          }
+        </a>
       }
-    </div>
+
+      <div class="relative">
+        <button
+          (click)="toggleUserMenu()"
+          class="flex items-center gap-2 rounded-xl px-3 py-2 hover:bg-neutral-100 transition-colors"
+        >
+          <div class="avatar-circle w-8 h-8 text-sm">{{ initials() }}</div>
+          <span class="hidden sm:block text-sm font-medium text-neutral-700">{{ displayName() }}</span>
+          <i class="lni lni-chevron-down text-neutral-400 text-sm"></i>
+        </button>
+
+        @if (userMenuOpen()) {
+          <div class="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-lg border border-neutral-100 py-1 z-50">
+            <div class="px-3 py-2 border-b border-neutral-100 mb-1">
+              <p class="text-xs font-semibold text-neutral-800 truncate">{{ displayName() }}</p>
+              <p class="text-xs text-neutral-400 truncate">{{ profile()?.email }}</p>
+            </div>
+            <button
+              (click)="onLogout()"
+              [disabled]="loggingOut()"
+              class="w-full text-left px-3 py-2 text-sm text-danger hover:bg-red-50 transition-colors flex items-center gap-2 disabled:opacity-50"
+            >
+              <i class="lni lni-exit text-sm"></i>
+              {{ loggingOut() ? 'Logging out…' : 'Logout' }}
+            </button>
+          </div>
+        }
+      </div>
+
+      
     </div>
   </header>
 

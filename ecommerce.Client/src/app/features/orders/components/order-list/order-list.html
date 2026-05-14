@@ -1,0 +1,145 @@
+<div class="space-y-6">
+
+  <!-- Page Header -->
+  <div class="page-header rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-extrabold text-white tracking-tight">
+        {{ isAdmin() ? 'All Orders' : 'My Orders' }}
+      </h1>
+      <p class="text-teal-200 text-sm mt-0.5">
+        {{ isAdmin() ? 'Manage and track all customer orders' : 'Track and manage your orders' }}
+      </p>
+    </div>
+    <div class="flex items-center gap-2 self-start sm:self-auto">
+      <span class="text-teal-200 text-sm font-medium">
+        {{ filteredOrders().length }} order{{ filteredOrders().length !== 1 ? 's' : '' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Status Filter Tabs -->
+  <div class="flex gap-2 flex-wrap">
+    @for (opt of statusOptions; track opt.value) {
+      <button
+        (click)="filterBy(opt.value)"
+        [class.filter-tab--active]="selectedStatus() === opt.value"
+        class="filter-tab">
+        {{ opt.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="flex justify-center items-center py-24">
+      <svg class="animate-spin w-8 h-8 text-[#0E7C7B]" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+      </svg>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (!isLoading() && error()) {
+    <div class="section-card p-6 text-center text-[#DC2626]">
+      <p class="font-semibold">{{ error() }}</p>
+      <button (click)="loadOrders()" class="btn-primary mt-4 px-6">Retry</button>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading() && !error() && filteredOrders().length === 0) {
+    <div class="section-card flex flex-col items-center justify-center py-24 gap-4">
+      <div class="empty-icon-box">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+      </div>
+      <p class="text-neutral-400 font-medium">No orders found</p>
+      <p class="text-neutral-400 text-sm">
+        {{ selectedStatus() !== 'all' ? 'Try a different filter' : 'No orders have been placed yet' }}
+      </p>
+    </div>
+  }
+
+  <!-- Orders Table (Desktop) + Cards (Mobile) -->
+  @if (!isLoading() && !error() && filteredOrders().length > 0) {
+
+    <!-- Desktop Table -->
+    <div class="data-card overflow-hidden hidden sm:block">
+      <table class="w-full text-sm">
+        <thead class="table-head">
+          <tr>
+            <th class="text-left px-5 py-3.5 font-semibold text-white text-xs uppercase tracking-wide">Order #</th>
+            <th class="text-left px-5 py-3.5 font-semibold text-white text-xs uppercase tracking-wide">Date</th>
+            <th class="text-left px-5 py-3.5 font-semibold text-white text-xs uppercase tracking-wide">Items</th>
+            <th class="text-left px-5 py-3.5 font-semibold text-white text-xs uppercase tracking-wide">Total</th>
+            <th class="text-left px-5 py-3.5 font-semibold text-white text-xs uppercase tracking-wide">Status</th>
+            <th class="text-left px-5 py-3.5 font-semibold text-white text-xs uppercase tracking-wide">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-neutral-100 dark:divide-neutral-700">
+          @for (order of filteredOrders(); track order.id) {
+            <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
+              <td class="px-5 py-4">
+                <span class="font-bold text-[#0E7C7B] dark:text-[#14B8A6]">
+                  #{{ order.orderNumber }}
+                </span>
+              </td>
+              <td class="px-5 py-4 text-neutral-500 dark:text-neutral-400 text-xs">
+                {{ order.createdAt | date:'dd MMM yyyy' }}
+              </td>
+              <td class="px-5 py-4 text-neutral-600 dark:text-neutral-300">
+                {{ order.itemsCount }} item{{ order.itemsCount !== 1 ? 's' : '' }}
+              </td>
+              <td class="px-5 py-4 font-bold text-neutral-800 dark:text-neutral-100">
+                ${{ order.totalAmount | number:'1.2-2' }}
+              </td>
+              <td class="px-5 py-4">
+                <span [class]="getStatusClass(order.status)" class="status-badge">
+                  {{ getStatusIcon(order.status) }} {{ order.status }}
+                </span>
+              </td>
+              <td class="px-5 py-4">
+                <button (click)="viewOrder(order.id)" class="btn-primary px-3 py-1.5 text-xs rounded-lg">
+                  View
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    
+    <!-- Mobile Cards -->
+    <ul class="sm:hidden space-y-3">
+      @for (order of filteredOrders(); track order.id) {
+        <li class="section-card p-4 space-y-3">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="font-bold text-[#0E7C7B] dark:text-[#14B8A6]">#{{ order.orderNumber }}</p>
+              <p class="text-xs text-neutral-400 mt-0.5">{{ order.createdAt | date:'dd MMM yyyy' }}</p>
+            </div>
+            <span [class]="getStatusClass(order.status)" class="status-badge text-xs">
+              {{ getStatusIcon(order.status) }} {{ order.status }}
+            </span>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-neutral-100 dark:border-neutral-700">
+            <div>
+              <p class="text-xs text-neutral-400">{{ order.itemsCount }} items</p>
+              <p class="font-bold text-neutral-800 dark:text-neutral-100">${{ order.totalAmount | number:'1.2-2' }}</p>
+            </div>
+            <button (click)="viewOrder(order.id)" class="btn-primary px-4 py-2 text-xs rounded-lg">
+              View Details
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+    
+
+  }
+
+</div>
