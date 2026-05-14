@@ -111,6 +111,7 @@ public static class DependencyInjection
         services.AddTransient<IEmailService, EmailService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAdminUserService, AdminUserService>();
+        services.AddScoped<IUserProfileService, UserProfileService>();
 
         services.AddScoped<ICountryService, CountryService>();
         services.AddScoped<IStateProvinceService, StateProvinceService>();

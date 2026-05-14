@@ -18,3 +18,11 @@ public record UpdateUserRequest(
     string Email,
     RegisterAddressRequest Address
 );
+
+public record UpdateUserProfileRequest(
+    string FirstName,
+    string LastName,
+    string Phone,
+    string Email,
+    RegisterAddressRequest Address
+);

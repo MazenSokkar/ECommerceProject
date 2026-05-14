@@ -15,3 +15,13 @@ public record AdminUsersByRoleResponse(
     IEnumerable<AdminUserResponse> Merchants,
     IEnumerable<AdminUserResponse> Customers
 );
+
+public record UserProfileResponse(
+    int Id,
+    string FirstName,
+    string LastName,
+    string Phone,
+    string Email,
+    bool Active,
+    IEnumerable<ecommerce.Contracts.Address.AddressResponse> Addresses
+);
