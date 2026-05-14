@@ -32,7 +32,8 @@ export class MainLayout implements OnInit {
   });
 
   protected readonly isCustomer = computed(() => this.auth.hasRole(ROLES.Customer));
-protected readonly isAdmin = computed(() => this.auth.hasRole(ROLES.Admin));
+  protected readonly isAdmin = computed(() => this.auth.hasRole(ROLES.Admin));
+  protected readonly isMerchant = computed(() => this.auth.hasRole(ROLES.Merchant));
   protected readonly cartCount = signal(0);
   protected readonly userMenuOpen = signal(false);
   protected readonly loggingOut = signal(false);
@@ -45,13 +46,13 @@ protected readonly isAdmin = computed(() => this.auth.hasRole(ROLES.Admin));
 
   private loadCartCount(): void {
     this.cartApi.getCart().subscribe({
-next: res => this.cartCount.set(res.data?.totalItems ?? 0),
+      next: (res) => this.cartCount.set(res.data?.totalItems ?? 0),
       error: () => this.cartCount.set(0),
     });
   }
 
   protected toggleUserMenu(): void {
-    this.userMenuOpen.update(v => !v);
+    this.userMenuOpen.update((v) => !v);
   }
 
   protected async onLogout(): Promise<void> {

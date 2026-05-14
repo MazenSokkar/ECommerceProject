@@ -1,16 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LocationApiService } from '../../../../core/services/location-api.service';
+import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { ToastService } from '../../../../core/services/toast.service';
+import { LocationApiService } from '../../../../core/services/location-api.service';
 import {
-  CityResponse,
-  CountryResponse,
-  StateProvinceResponse,
-} from '../../../../shared/models/location.model';
-import { FormField } from '../../../../shared/components/form-field/form-field';
-import { Button } from '../../../../shared/components/button/button';
-import { PasswordInput } from '../../../../shared/components/password-input/password-input';
+  UserFormModal,
+  UserFormValue,
+} from '../../../../shared/components/user-form-modal/user-form-modal';
 import { AdminUsersApiService } from '../../services/admin-users-api.service';
 import {
   AdminUser,
@@ -22,7 +17,7 @@ import {
 @Component({
   selector: 'app-admin-users-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormField, Button, PasswordInput],
+  imports: [CommonModule, UserFormModal],
   templateUrl: './admin-users-page.html',
   styleUrl: './admin-users-page.css',
 })
@@ -30,6 +25,8 @@ export class AdminUsersPage implements OnInit {
   private readonly api = inject(AdminUsersApiService);
   private readonly locationApi = inject(LocationApiService);
   private readonly toast = inject(ToastService);
+
+  @ViewChild(UserFormModal) private modalRef!: UserFormModal;
 
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
@@ -39,32 +36,7 @@ export class AdminUsersPage implements OnInit {
   protected readonly groups = signal<AdminUsersByRoleResponse | null>(null);
   protected readonly activeTab = signal<'customers' | 'admins' | 'merchants'>('customers');
   protected readonly editingUser = signal<AdminUser | null>(null);
-
-  protected readonly countries = signal<CountryResponse[]>([]);
-  protected readonly states = signal<StateProvinceResponse[]>([]);
-  protected readonly cities = signal<CityResponse[]>([]);
-  protected readonly loadingStates = signal(false);
-  protected readonly loadingCities = signal(false);
-
-  protected readonly form = new FormGroup({
-    firstName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    lastName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    email: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.email],
-    }),
-    phone: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.pattern(/^(10|11|12|15)\d{8}$/)],
-    }),
-    password: new FormControl('', { nonNullable: true }),
-    locationName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    countryId: new FormControl<number | null>(null, { validators: [Validators.required] }),
-    stateProvinceId: new FormControl<number | null>(null, { validators: [Validators.required] }),
-    cityId: new FormControl<number | null>(null, { validators: [Validators.required] }),
-    latitude: new FormControl<string>('', { nonNullable: true }),
-    longitude: new FormControl<string>('', { nonNullable: true }),
-  });
+  protected readonly modalOpen = signal(false);
 
   protected readonly isEditing = computed(() => this.editingUser() !== null);
 
@@ -77,11 +49,6 @@ export class AdminUsersPage implements OnInit {
   });
 
   ngOnInit(): void {
-    this.locationApi.getCountries().subscribe({
-      next: (res) => this.countries.set(res.data ?? []),
-    });
-
-    this.setPasswordValidators(true);
     this.loadUsers();
   }
 
@@ -94,135 +61,69 @@ export class AdminUsersPage implements OnInit {
     this.loadUsers();
   }
 
-  protected onCountryChange(event: Event): void {
-    const id = Number((event.target as HTMLSelectElement).value);
-    this.form.patchValue({ stateProvinceId: null, cityId: null });
-    this.states.set([]);
-    this.cities.set([]);
-    if (!id) return;
-    this.loadingStates.set(true);
-    this.locationApi.getStateProvincesByCountry(id).subscribe({
-      next: (res) => {
-        this.states.set(res.data ?? []);
-        this.loadingStates.set(false);
-      },
-      error: () => this.loadingStates.set(false),
-    });
-  }
-
-  protected onStateChange(event: Event): void {
-    const id = Number((event.target as HTMLSelectElement).value);
-    this.form.patchValue({ cityId: null });
-    this.cities.set([]);
-    if (!id) return;
-    this.loadingCities.set(true);
-    this.locationApi.getCitiesByStateProvince(id).subscribe({
-      next: (res) => {
-        this.cities.set(res.data ?? []);
-        this.loadingCities.set(false);
-      },
-      error: () => this.loadingCities.set(false),
-    });
-  }
-
   protected openCreate(): void {
     this.editingUser.set(null);
-    this.form.reset();
-    this.states.set([]);
-    this.cities.set([]);
-    this.setPasswordValidators(true);
+    this.modalOpen.set(true);
   }
 
   protected openEdit(user: AdminUser): void {
     this.editingUser.set(user);
-    this.setPasswordValidators(false);
-    this.form.patchValue({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      phone: this.stripPhone(user.phone),
-      password: '',
-      locationName: '',
-      countryId: null,
-      stateProvinceId: null,
-      cityId: null,
-      latitude: '',
-      longitude: '',
-    });
+    this.modalOpen.set(true);
 
-    this.locationApi.getAddressesByUser(user.id).subscribe({
-      next: (res) => {
-        const address = res.data?.[0];
-        if (!address) return;
-        this.form.patchValue({
-          locationName: address.locationName,
-          countryId: address.countryId,
-          stateProvinceId: address.stateProvinceId,
-          cityId: address.cityId,
-          latitude: address.latitude ?? '',
-          longitude: address.longitude ?? '',
-        });
-
-        this.loadingStates.set(true);
-        this.locationApi.getStateProvincesByCountry(address.countryId).subscribe({
-          next: (statesRes) => {
-            this.states.set(statesRes.data ?? []);
-            this.loadingStates.set(false);
-          },
-          error: () => this.loadingStates.set(false),
-        });
-
-        this.loadingCities.set(true);
-        this.locationApi.getCitiesByStateProvince(address.stateProvinceId).subscribe({
-          next: (citiesRes) => {
-            this.cities.set(citiesRes.data ?? []);
-            this.loadingCities.set(false);
-          },
-          error: () => this.loadingCities.set(false),
-        });
-      },
+    // Load address after modal opens (next tick so ViewChild is ready)
+    setTimeout(() => {
+      this.locationApi.getAddressesByUser(user.id).subscribe({
+        next: (res) => {
+          const address = res.data?.[0];
+          if (!address || !this.modalRef) return;
+          this.modalRef.patchAddress({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phone: this.stripPhone(user.phone),
+            locationName: address.locationName,
+            countryId: address.countryId,
+            stateProvinceId: address.stateProvinceId,
+            cityId: address.cityId,
+            latitude: address.latitude ?? '',
+            longitude: address.longitude ?? '',
+          });
+        },
+      });
     });
   }
 
-  protected cancelEdit(): void {
+  protected closeModal(): void {
     this.editingUser.set(null);
-    this.form.reset();
-    this.states.set([]);
-    this.cities.set([]);
-    this.setPasswordValidators(true);
+    this.modalOpen.set(false);
   }
 
-  protected onSubmit(): void {
-    this.form.markAllAsTouched();
-    if (this.form.invalid || this.saving()) return;
-
-    const v = this.form.getRawValue();
-    const address = {
-      locationName: v.locationName,
-      countryId: v.countryId!,
-      stateProvinceId: v.stateProvinceId!,
-      cityId: v.cityId!,
-      latitude: v.latitude || null,
-      longitude: v.longitude || null,
-    };
-
+  protected onFormSubmitted(value: UserFormValue): void {
+    if (this.saving()) return;
     this.saving.set(true);
 
     if (this.isEditing()) {
       const user = this.editingUser()!;
       const body: UpdateAdminUserRequest = {
-        firstName: v.firstName,
-        lastName: v.lastName,
-        email: v.email,
-        phone: this.normalizePhone(v.phone),
-        address,
+        firstName: value.firstName,
+        lastName: value.lastName,
+        email: value.email,
+        phone: this.normalizePhone(value.phone),
+        address: {
+          locationName: value.locationName,
+          countryId: value.countryId!,
+          stateProvinceId: value.stateProvinceId!,
+          cityId: value.cityId!,
+          latitude: value.latitude || null,
+          longitude: value.longitude || null,
+        },
       };
       this.api.update(user.id, body).subscribe({
         next: () => {
           this.saving.set(false);
           this.toast.success('Success', 'User updated successfully.');
           this.loadUsers();
-          this.cancelEdit();
+          this.closeModal();
         },
         error: () => {
           this.saving.set(false);
@@ -233,12 +134,19 @@ export class AdminUsersPage implements OnInit {
     }
 
     const body: CreateAdminUserRequest = {
-      firstName: v.firstName,
-      lastName: v.lastName,
-      email: v.email,
-      phone: this.normalizePhone(v.phone),
-      password: v.password,
-      address,
+      firstName: value.firstName,
+      lastName: value.lastName,
+      email: value.email,
+      phone: this.normalizePhone(value.phone),
+      password: value.password,
+      address: {
+        locationName: value.locationName,
+        countryId: value.countryId!,
+        stateProvinceId: value.stateProvinceId!,
+        cityId: value.cityId!,
+        latitude: value.latitude || null,
+        longitude: value.longitude || null,
+      },
     };
 
     this.api.create(body).subscribe({
@@ -246,8 +154,7 @@ export class AdminUsersPage implements OnInit {
         this.saving.set(false);
         this.toast.success('Success', 'User created successfully.');
         this.loadUsers();
-        this.form.reset();
-        this.setPasswordValidators(true);
+        this.closeModal();
       },
       error: () => {
         this.saving.set(false);
@@ -303,16 +210,6 @@ export class AdminUsersPage implements OnInit {
         this.loading.set(false);
       },
     });
-  }
-
-  private setPasswordValidators(required: boolean): void {
-    const control = this.form.controls.password;
-    if (required) {
-      control.setValidators([Validators.required, Validators.minLength(8)]);
-    } else {
-      control.clearValidators();
-    }
-    control.updateValueAndValidity();
   }
 
   private stripPhone(value: string): string {

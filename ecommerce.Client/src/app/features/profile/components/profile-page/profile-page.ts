@@ -1,24 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocationApiService } from '../../../../core/services/location-api.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import {
-  CityResponse,
-  CountryResponse,
-  StateProvinceResponse,
-} from '../../../../shared/models/location.model';
-import { FormField } from '../../../../shared/components/form-field/form-field';
 import { Button } from '../../../../shared/components/button/button';
+import {
+  UserFormModal,
+  UserFormValue,
+} from '../../../../shared/components/user-form-modal/user-form-modal';
 import { ProfileApiService } from '../../services/profile-api.service';
 import { UpdateUserProfileRequest, UserProfileResponse } from '../../models/profile.model';
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormField, Button],
+  imports: [CommonModule, Button, UserFormModal],
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.css',
 })
@@ -29,95 +26,64 @@ export class ProfilePage implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
+  @ViewChild(UserFormModal) private modalRef!: UserFormModal;
+
   protected readonly profile = signal<UserProfileResponse | null>(null);
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
   protected readonly deleting = signal(false);
   protected readonly confirmingDelete = signal(false);
-
-  protected readonly countries = signal<CountryResponse[]>([]);
-  protected readonly states = signal<StateProvinceResponse[]>([]);
-  protected readonly cities = signal<CityResponse[]>([]);
-  protected readonly loadingStates = signal(false);
-  protected readonly loadingCities = signal(false);
-
-  protected readonly form = new FormGroup({
-    firstName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    lastName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    email: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.email],
-    }),
-    phone: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.pattern(/^(10|11|12|15)\d{8}$/)],
-    }),
-    locationName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    countryId: new FormControl<number | null>(null, { validators: [Validators.required] }),
-    stateProvinceId: new FormControl<number | null>(null, { validators: [Validators.required] }),
-    cityId: new FormControl<number | null>(null, { validators: [Validators.required] }),
-    latitude: new FormControl<string>('', { nonNullable: true }),
-    longitude: new FormControl<string>('', { nonNullable: true }),
-  });
+  protected readonly modalOpen = signal(false);
 
   protected readonly isActive = computed(() => this.profile()?.active ?? false);
 
   ngOnInit(): void {
-    this.locationApi.getCountries().subscribe({
-      next: (res) => this.countries.set(res.data ?? []),
-    });
-
     this.loadProfile();
   }
 
-  protected onCountryChange(event: Event): void {
-    const id = Number((event.target as HTMLSelectElement).value);
-    this.form.patchValue({ stateProvinceId: null, cityId: null });
-    this.states.set([]);
-    this.cities.set([]);
-    if (!id) return;
-    this.loadingStates.set(true);
-    this.locationApi.getStateProvincesByCountry(id).subscribe({
-      next: (res) => {
-        this.states.set(res.data ?? []);
-        this.loadingStates.set(false);
-      },
-      error: () => this.loadingStates.set(false),
+  protected openEditModal(): void {
+    const p = this.profile();
+    if (!p) return;
+    this.modalOpen.set(true);
+
+    // After modal opens, patch the form with profile data
+    setTimeout(() => {
+      if (!this.modalRef) return;
+      const address = p.addresses[0];
+      this.modalRef.patchAddress({
+        firstName: p.firstName,
+        lastName: p.lastName,
+        email: p.email,
+        phone: this.stripPhone(p.phone ?? ''),
+        locationName: address?.locationName ?? '',
+        countryId: address?.countryId ?? null,
+        stateProvinceId: address?.stateProvinceId ?? null,
+        cityId: address?.cityId ?? null,
+        latitude: address?.latitude ?? '',
+        longitude: address?.longitude ?? '',
+      });
     });
   }
 
-  protected onStateChange(event: Event): void {
-    const id = Number((event.target as HTMLSelectElement).value);
-    this.form.patchValue({ cityId: null });
-    this.cities.set([]);
-    if (!id) return;
-    this.loadingCities.set(true);
-    this.locationApi.getCitiesByStateProvince(id).subscribe({
-      next: (res) => {
-        this.cities.set(res.data ?? []);
-        this.loadingCities.set(false);
-      },
-      error: () => this.loadingCities.set(false),
-    });
+  protected closeModal(): void {
+    this.modalOpen.set(false);
   }
 
-  protected onSubmit(): void {
-    this.form.markAllAsTouched();
-    if (this.form.invalid || this.saving()) return;
+  protected onFormSubmitted(value: UserFormValue): void {
+    if (this.saving()) return;
 
-    const v = this.form.getRawValue();
     const body: UpdateUserProfileRequest = {
-      firstName: v.firstName,
-      lastName: v.lastName,
-      email: v.email,
-      phone: this.normalizePhone(v.phone),
+      firstName: value.firstName,
+      lastName: value.lastName,
+      email: value.email,
+      phone: this.normalizePhone(value.phone),
       address: {
-        locationName: v.locationName,
-        countryId: v.countryId!,
-        stateProvinceId: v.stateProvinceId!,
-        cityId: v.cityId!,
-        latitude: v.latitude || null,
-        longitude: v.longitude || null,
+        locationName: value.locationName,
+        countryId: value.countryId!,
+        stateProvinceId: value.stateProvinceId!,
+        cityId: value.cityId!,
+        latitude: value.latitude || null,
+        longitude: value.longitude || null,
       },
     };
 
@@ -128,6 +94,7 @@ export class ProfilePage implements OnInit {
         if (res.data) {
           this.profile.set(res.data);
           this.toast.success('Success', 'Profile updated successfully.');
+          this.closeModal();
         }
       },
       error: () => {
@@ -168,52 +135,11 @@ export class ProfilePage implements OnInit {
       next: (res) => {
         this.profile.set(res.data ?? null);
         this.loading.set(false);
-        if (res.data) this.patchForm(res.data);
       },
       error: () => {
         this.loading.set(false);
       },
     });
-  }
-
-  private patchForm(profile: UserProfileResponse): void {
-    const address = profile.addresses[0];
-    const phone = this.stripPhone(profile.phone ?? '');
-
-    this.form.patchValue({
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      email: profile.email,
-      phone,
-      locationName: address?.locationName ?? '',
-      countryId: address?.countryId ?? null,
-      stateProvinceId: address?.stateProvinceId ?? null,
-      cityId: address?.cityId ?? null,
-      latitude: address?.latitude ?? '',
-      longitude: address?.longitude ?? '',
-    });
-
-    if (address?.countryId) {
-      this.loadingStates.set(true);
-      this.locationApi.getStateProvincesByCountry(address.countryId).subscribe({
-        next: (res) => {
-          this.states.set(res.data ?? []);
-          this.loadingStates.set(false);
-        },
-        error: () => this.loadingStates.set(false),
-      });
-    }
-
-    if (address?.stateProvinceId) {
-      this.loadingCities.set(true);
-      this.locationApi.getCitiesByStateProvince(address.stateProvinceId).subscribe({
-        next: (res) => {
-          this.cities.set(res.data ?? []);
-          this.loadingCities.set(false);
-        },
-        error: () => this.loadingCities.set(false),
-      });
-    }
   }
 
   private stripPhone(value: string): string {

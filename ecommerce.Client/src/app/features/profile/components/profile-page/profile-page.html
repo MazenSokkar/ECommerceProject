@@ -12,95 +12,76 @@
 
     @if (loading()) {
     <div class="py-24 flex items-center justify-center">
-        <i class="lni lni-spinner-solid animate-spin text-[#0E7C7B] text-3xl"></i>
+        <i class="lni lni-spinner-solid animate-spin text-primary text-3xl"></i>
     </div>
     } @else {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Profile Summary Card -->
         <div class="section-card card-stripe lg:col-span-2">
-            <form [formGroup]="form" class="p-5 sm:p-6 space-y-5">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <app-form-field label="First name" [control]="form.controls.firstName" [required]="true" />
-                    <app-form-field label="Last name" [control]="form.controls.lastName" [required]="true" />
-                </div>
-
-                <app-form-field label="Email" type="email" [control]="form.controls.email" [required]="true" />
-
-                <app-form-field label="Phone" type="tel" prefix="+20" [control]="form.controls.phone" [required]="true"
-                    [errorMessages]="{ pattern: 'Enter a valid Egyptian mobile number (e.g. 1012345678).' }" />
-
-                <div class="border-t border-neutral-200 pt-4">
-                    <h3 class="text-lg font-semibold text-neutral-800 mb-4">Address</h3>
-                    <div class="space-y-4">
-                        <app-form-field label="Location name" placeholder="e.g. Home, Office"
-                            [control]="form.controls.locationName" [required]="true" />
-
-                        <div>
-                            <label class="block text-sm font-medium text-neutral-700 mb-1.5" for="countryId">
-                                Country <span class="text-danger">*</span>
-                            </label>
-                            <select id="countryId" formControlName="countryId" class="form-input"
-                                [class.form-input--error]="form.controls.countryId.invalid && form.controls.countryId.touched"
-                                (change)="onCountryChange($event)">
-                                <option [value]="null">Select country</option>
-                                @for (c of countries(); track c.id) {
-                                <option [value]="c.id">{{ c.nameEn }}</option>
-                                }
-                            </select>
-                            @if (form.controls.countryId.invalid && form.controls.countryId.touched) {
-                            <p class="text-danger text-xs mt-1">Please select a country.</p>
-                            }
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-neutral-700 mb-1.5" for="stateProvinceId">
-                                State / Province <span class="text-danger">*</span>
-                            </label>
-                            <select id="stateProvinceId" formControlName="stateProvinceId" class="form-input"
-                                [class.form-input--error]="form.controls.stateProvinceId.invalid && form.controls.stateProvinceId.touched"
-                                [disabled]="!form.value.countryId || loadingStates()" (change)="onStateChange($event)">
-                                <option [value]="null">{{ loadingStates() ? 'Loading…' : 'Select state' }}</option>
-                                @for (s of states(); track s.id) {
-                                <option [value]="s.id">{{ s.nameEn }}</option>
-                                }
-                            </select>
-                            @if (form.controls.stateProvinceId.invalid && form.controls.stateProvinceId.touched) {
-                            <p class="text-danger text-xs mt-1">Please select a state.</p>
-                            }
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-neutral-700 mb-1.5" for="cityId">
-                                City <span class="text-danger">*</span>
-                            </label>
-                            <select id="cityId" formControlName="cityId" class="form-input"
-                                [class.form-input--error]="form.controls.cityId.invalid && form.controls.cityId.touched"
-                                [disabled]="!form.value.stateProvinceId || loadingCities()">
-                                <option [value]="null">{{ loadingCities() ? 'Loading…' : 'Select city' }}</option>
-                                @for (c of cities(); track c.id) {
-                                <option [value]="c.id">{{ c.nameEn }}</option>
-                                }
-                            </select>
-                            @if (form.controls.cityId.invalid && form.controls.cityId.touched) {
-                            <p class="text-danger text-xs mt-1">Please select a city.</p>
-                            }
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <app-form-field label="Latitude" hint="(optional)" [control]="form.controls.latitude" />
-                            <app-form-field label="Longitude" hint="(optional)" [control]="form.controls.longitude" />
-                        </div>
+            <div class="p-5 sm:p-6 space-y-5">
+                <!-- Avatar + Name -->
+                <div class="flex items-center gap-4">
+                    <div class="profile-avatar">
+                        {{ profile()?.firstName?.[0] ?? '' }}{{ profile()?.lastName?.[0] ?? '' }}
                     </div>
-                </div>
-
-                <div class="flex flex-col sm:flex-row gap-3 pt-4">
-                    <app-button variant="primary" [loading]="saving()" loadingText="Saving…" type="button"
-                        (click)="onSubmit()">
-                        Save changes
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xl font-bold text-neutral-800 truncate">
+                            {{ profile()?.firstName }} {{ profile()?.lastName }}
+                        </p>
+                        <p class="text-sm text-neutral-500 truncate">{{ profile()?.email }}</p>
+                        <p class="text-sm text-neutral-400">{{ profile()?.phone }}</p>
+                    </div>
+                    <app-button variant="primary" type="button" (click)="openEditModal()">
+                        Edit Profile
                     </app-button>
                 </div>
-            </form>
+
+                <!-- Info grid -->
+                <div class="profile-info-grid">
+                    <div class="profile-info-item">
+                        <span class="profile-info-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                <polyline points="22,6 12,13 2,6" />
+                            </svg>
+                            Email
+                        </span>
+                        <span class="profile-info-value">{{ profile()?.email }}</span>
+                    </div>
+                    <div class="profile-info-item">
+                        <span class="profile-info-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                            </svg>
+                            Phone
+                        </span>
+                        <span class="profile-info-value">{{ profile()?.phone }}</span>
+                    </div>
+                    @if (profile()?.addresses?.[0]) {
+                    <div class="profile-info-item">
+                        <span class="profile-info-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                                <circle cx="12" cy="10" r="3" />
+                            </svg>
+                            Location
+                        </span>
+                        <span class="profile-info-value">{{ profile()?.addresses?.[0]?.locationName }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
         </div>
 
+        <!-- Account Status Card -->
         <div class="section-card">
             <div class="p-5 sm:p-6 space-y-4">
                 <div>
@@ -140,3 +121,13 @@
     </div>
     }
 </div>
+
+<!-- Shared Edit Profile Modal -->
+<app-user-form-modal
+    [open]="modalOpen()"
+    title="Edit Profile"
+    submitLabel="Save changes"
+    [showPassword]="false"
+    [saving]="saving()"
+    (submitted)="onFormSubmitted($event)"
+    (cancelled)="closeModal()" />
