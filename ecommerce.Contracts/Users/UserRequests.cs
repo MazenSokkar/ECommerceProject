@@ -1,3 +1,5 @@
+using ecommerce.Contracts.Auth;
+
 namespace ecommerce.Contracts.Users;
 
 public record CreateUserRequest(
@@ -5,12 +7,14 @@ public record CreateUserRequest(
     string LastName,
     string Phone,
     string Email,
-    string Password
+    string Password,
+    RegisterAddressRequest Address
 );
 
 public record UpdateUserRequest(
     string FirstName,
     string LastName,
     string Phone,
-    string Email
+    string Email,
+    RegisterAddressRequest Address
 );

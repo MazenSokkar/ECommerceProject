@@ -9,3 +9,9 @@ public record AdminUserResponse(
     bool Active,
     bool Deleted
 );
+
+public record AdminUsersByRoleResponse(
+    IEnumerable<AdminUserResponse> Admins,
+    IEnumerable<AdminUserResponse> Merchants,
+    IEnumerable<AdminUserResponse> Customers
+);

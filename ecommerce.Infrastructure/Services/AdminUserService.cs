@@ -11,20 +11,34 @@ using Microsoft.AspNetCore.Http;
 
 namespace ecommerce.Infrastructure.Services;
 
-public class AdminUserService(IAuthRepository authRepository) : IAdminUserService
+public class AdminUserService(
+    IAuthRepository authRepository,
+    IAddressRepository addressRepository,
+    ICountryRepository countryRepository,
+    IStateProvinceRepository stateProvinceRepository,
+    ICityRepository cityRepository,
+    IUnitOfWork unitOfWork) : IAdminUserService
 {
     private readonly IAuthRepository _authRepository = authRepository;
+    private readonly IAddressRepository _addressRepository = addressRepository;
+    private readonly ICountryRepository _countryRepository = countryRepository;
+    private readonly IStateProvinceRepository _stateProvinceRepository = stateProvinceRepository;
+    private readonly ICityRepository _cityRepository = cityRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<Result<IEnumerable<AdminUserResponse>>> GetAllAsync(bool includeDeleted = false, CancellationToken cancellationToken = default)
+    public async Task<Result<AdminUsersByRoleResponse>> GetAllAsync(bool includeDeleted = false, CancellationToken cancellationToken = default)
     {
-        var users = await _authRepository.GetUsersInRoleAsync(DefaultRoles.Customer);
+        var admins = await _authRepository.GetUsersInRoleAsync(DefaultRoles.Admin);
+        var merchants = await _authRepository.GetUsersInRoleAsync(DefaultRoles.Merchant);
+        var customers = await _authRepository.GetUsersInRoleAsync(DefaultRoles.Customer);
 
-        var filtered = includeDeleted
-            ? users
-            : users.Where(u => !u.Deleted);
+        var response = new AdminUsersByRoleResponse(
+            FilterUsers(admins, includeDeleted),
+            FilterUsers(merchants, includeDeleted),
+            FilterUsers(customers, includeDeleted)
+        );
 
-        var response = filtered.Select(MapUser).ToList();
-        return Result.Success<IEnumerable<AdminUserResponse>>(response);
+        return Result.Success(response);
     }
 
     public async Task<Result<AdminUserResponse>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -69,6 +83,12 @@ public class AdminUserService(IAuthRepository authRepository) : IAdminUserServic
 
         await _authRepository.AssignRoleAsync(user, DefaultRoles.Customer);
 
+        var addressResult = await ValidateAndUpsertUserAddressAsync(user.Id, request.Address, cancellationToken);
+        if (addressResult.IsFailure)
+            return Result.Failure<AdminUserResponse>(addressResult.Error);
+
+        await _unitOfWork.Complete();
+
         return Result.Success(MapUser(user));
     }
 
@@ -104,6 +124,12 @@ public class AdminUserService(IAuthRepository authRepository) : IAdminUserServic
         if (!updateResult.Succeeded)
             return Result.Failure<AdminUserResponse>(UserErrors.UpdateFailed);
 
+        var addressResult = await ValidateAndUpsertUserAddressAsync(user.Id, request.Address, cancellationToken);
+        if (addressResult.IsFailure)
+            return Result.Failure<AdminUserResponse>(addressResult.Error);
+
+        await _unitOfWork.Complete();
+
         return Result.Success(MapUser(user));
     }
 
@@ -137,4 +163,41 @@ public class AdminUserService(IAuthRepository authRepository) : IAdminUserServic
             user.Active,
             user.Deleted
         );
+
+    private static IEnumerable<AdminUserResponse> FilterUsers(IEnumerable<ApplicationUser> users, bool includeDeleted)
+    {
+        var filtered = includeDeleted
+            ? users
+            : users.Where(u => !u.Deleted);
+
+        return filtered.Select(MapUser).ToList();
+    }
+
+    private async Task<Result> ValidateAndUpsertUserAddressAsync(int userId, ecommerce.Contracts.Auth.RegisterAddressRequest address, CancellationToken cancellationToken)
+    {
+        var country = await _countryRepository.GetByIdAsync(address.CountryId, cancellationToken);
+        if (country is null)
+            return Result.Failure(CountryErrors.NotFound);
+
+        var stateProvince = await _stateProvinceRepository.GetByIdAsync(address.StateProvinceId, cancellationToken);
+        if (stateProvince is null)
+            return Result.Failure(StateProvinceErrors.NotFound);
+
+        var city = await _cityRepository.GetByIdAsync(address.CityId, cancellationToken);
+        if (city is null)
+            return Result.Failure(CityErrors.NotFound);
+
+        var upsert = new Address
+        {
+            LocationName = address.LocationName,
+            CityId = address.CityId,
+            StateProvinceId = address.StateProvinceId,
+            CountryId = address.CountryId,
+            Longitude = address.Longitude ?? string.Empty,
+            Latitude = address.Latitude ?? string.Empty
+        };
+
+        await _addressRepository.UpsertUserAddressAsync(userId, upsert, cancellationToken);
+        return Result.Success();
+    }
 }

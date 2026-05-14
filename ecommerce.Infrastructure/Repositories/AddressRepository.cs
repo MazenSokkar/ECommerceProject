@@ -25,6 +25,29 @@ public class AddressRepository(AppDbContext context) : IAddressRepository
         return entity;
     }
 
+    public async Task<Address> UpsertUserAddressAsync(int userId, Address address, CancellationToken cancellationToken = default)
+    {
+        var existing = await context.Addresses
+            .FirstOrDefaultAsync(a => a.UserId == userId, cancellationToken);
+
+        if (existing is null)
+        {
+            address.UserId = userId;
+            await context.Addresses.AddAsync(address, cancellationToken);
+            return address;
+        }
+
+        existing.LocationName = address.LocationName;
+        existing.CityId = address.CityId;
+        existing.StateProvinceId = address.StateProvinceId;
+        existing.CountryId = address.CountryId;
+        existing.Longitude = address.Longitude;
+        existing.Latitude = address.Latitude;
+
+        context.Addresses.Update(existing);
+        return existing;
+    }
+
     public Task<Address> UpdateAsync(Address entity, CancellationToken cancellationToken = default)
     {
         context.Addresses.Update(entity);
