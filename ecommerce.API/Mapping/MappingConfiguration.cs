@@ -6,6 +6,7 @@ using ecommerce.Contracts.Country;
 using ecommerce.Contracts.Products;
 using ecommerce.Contracts.Sellers;
 using ecommerce.Contracts.StateProvince;
+using ecommerce.Contracts.Users;
 using ecommerce.Core.Entities;
 using ecommerce.Core.IRepositories;
 using ecommerce.Core.IServices;
@@ -65,6 +66,9 @@ public class MappingConfiguration : IRegister
 
 
         //WishList
-        
+        config.NewConfig<ApplicationUser, AdminUserResponse>()
+            .Map(dest => dest.Phone, src => src.PhoneNumber ?? string.Empty)
+            .Map(dest => dest.Email, src => src.Email ?? string.Empty);
+
     }
 }

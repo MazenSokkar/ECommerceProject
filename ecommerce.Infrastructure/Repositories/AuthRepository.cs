@@ -19,6 +19,7 @@ public class AuthRepository(
     public async Task<ApplicationUser?> FindByPhoneAsync(string phone) => await userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phone);
     public async Task<ApplicationUser?> FindByIdAsync(string id) => await userManager.FindByIdAsync(id);
     public async Task<IEnumerable<ApplicationUser>> GetAllUsers() => await userManager.Users.ToListAsync();
+    public async Task<IList<ApplicationUser>> GetUsersInRoleAsync(string role) => await userManager.GetUsersInRoleAsync(role);
 
     public async Task<SignInResult> CheckPasswordAsync(ApplicationUser user, string password, bool isPersistent, bool lockoutOnFailure)
         => await signInManager.PasswordSignInAsync(user, password, isPersistent, lockoutOnFailure);

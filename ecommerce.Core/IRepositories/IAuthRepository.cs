@@ -9,6 +9,7 @@ public interface IAuthRepository
     Task<ApplicationUser?> FindByPhoneAsync(string phone);
     Task<ApplicationUser?> FindByIdAsync(string id);
     Task<IEnumerable<ApplicationUser>> GetAllUsers();
+    Task<IList<ApplicationUser>> GetUsersInRoleAsync(string role);
     Task<SignInResult> CheckPasswordAsync(ApplicationUser user, string password, bool isPersistent, bool lockoutOnFailure);
     Task<IdentityResult> UpdateUserAsync(ApplicationUser user);
     Task<IdentityResult> CreateUserAsync(ApplicationUser user, string password);
