@@ -89,3 +89,14 @@
   background: #ffe4e6;
   border-color: #fca5a5;
 }
+
+/* Restore button — green outlined */
+.action-btn--restore {
+  color: #16a34a;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+.action-btn--restore:hover:not(:disabled) {
+  background: #dcfce7;
+  border-color: #86efac;
+}

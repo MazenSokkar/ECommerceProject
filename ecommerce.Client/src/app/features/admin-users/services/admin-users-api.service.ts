@@ -33,7 +33,7 @@ export class AdminUsersApiService {
     return this.http.put<ApiResponse<AdminUser>>(`${this.base}/${id}/status`, {});
   }
 
-  delete(id: number): Observable<ApiResponse<null>> {
+  toggleDeleted(id: number): Observable<ApiResponse<null>> {
     return this.http.delete<ApiResponse<null>>(`${this.base}/${id}`);
   }
 }

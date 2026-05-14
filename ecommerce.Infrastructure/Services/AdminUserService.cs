@@ -165,33 +165,49 @@ public class AdminUserService(
         return Result.Success(MapUser(user));
     }
 
-    public async Task<Result> SoftDeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Result> ToggleDeletedAsync(int id, CancellationToken cancellationToken = default)
     {
         var user = await _authRepository.FindByIdAsync(id.ToString());
-        if (user is null || user.Deleted)
+        if (user is null)
             return Result.Failure(UserErrors.UserNotFound);
 
         var roles = await _authRepository.GetRolesAsync(user);
         if (!roles.Contains(DefaultRoles.Customer))
             return Result.Failure(UserErrors.Forbidden);
 
-        user.Deleted = true;
-        user.Active = false;
-
-        var updateResult = await _authRepository.UpdateUserAsync(user);
-        if (!updateResult.Succeeded)
-            return Result.Failure(UserErrors.UpdateFailed);
-
-        var merchant = await _merchantRepository.FindByUserIdAsync(user.Id, cancellationToken);
-        if (merchant is not null && !merchant.Deleted)
+        if (user.Deleted)
         {
-            merchant.Deleted = true;
-            merchant.Active = false;
-            _merchantRepository.Update(merchant);
-            await _unitOfWork.Complete();
-        }
+            // --- Restore ---
+            user.Deleted = false;
+            user.Active = true;
 
-        return Result.Success();
+            var restoreResult = await _authRepository.UpdateUserAsync(user);
+            if (!restoreResult.Succeeded)
+                return Result.Failure(UserErrors.UpdateFailed);
+
+            return Result.Success();
+        }
+        else
+        {
+            // --- Soft-delete ---
+            user.Deleted = true;
+            user.Active = false;
+
+            var deleteResult = await _authRepository.UpdateUserAsync(user);
+            if (!deleteResult.Succeeded)
+                return Result.Failure(UserErrors.UpdateFailed);
+
+            var merchant = await _merchantRepository.FindByUserIdAsync(user.Id, cancellationToken);
+            if (merchant is not null && !merchant.Deleted)
+            {
+                merchant.Deleted = true;
+                merchant.Active = false;
+                _merchantRepository.Update(merchant);
+                await _unitOfWork.Complete();
+            }
+
+            return Result.Success();
+        }
     }
 
     private static AdminUserResponse MapUser(ApplicationUser user)

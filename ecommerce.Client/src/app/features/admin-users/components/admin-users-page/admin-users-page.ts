@@ -179,18 +179,19 @@ export class AdminUsersPage implements OnInit {
     });
   }
 
-  protected deleteUser(user: AdminUser): void {
+  protected toggleDeleted(user: AdminUser): void {
     if (this.deletingId()) return;
     this.deletingId.set(user.id);
-    this.api.delete(user.id).subscribe({
+    this.api.toggleDeleted(user.id).subscribe({
       next: () => {
         this.deletingId.set(null);
-        this.toast.success('Success', 'User deleted successfully.');
+        const msg = user.deleted ? 'User restored successfully.' : 'User deleted successfully.';
+        this.toast.success('Success', msg);
         this.loadUsers();
       },
       error: () => {
         this.deletingId.set(null);
-        this.toast.error('Error', 'Failed to delete user.');
+        this.toast.error('Error', 'Operation failed. Please try again.');
       },
     });
   }

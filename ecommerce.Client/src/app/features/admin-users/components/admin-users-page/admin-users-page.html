@@ -117,8 +117,24 @@
                                         }
                                         {{ user.active ? 'Deactivate' : 'Activate' }}
                                     </button>
+                                    @if (user.deleted) {
+                                    <button class="action-btn action-btn--restore" title="Restore user"
+                                        [disabled]="isBusy(user.id)" (click)="toggleDeleted(user)">
+                                        @if (isBusy(user.id) && deletingId() === user.id) {
+                                        <i class="lni lni-spinner-solid animate-spin" style="font-size:11px;"></i>
+                                        } @else {
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="1 4 1 10 7 10" />
+                                            <path d="M3.51 15a9 9 0 1 0 .49-3.6" />
+                                        </svg>
+                                        }
+                                        Restore
+                                    </button>
+                                    } @else {
                                     <button class="action-btn action-btn--delete" title="Delete user"
-                                        [disabled]="isBusy(user.id)" (click)="deleteUser(user)">
+                                        [disabled]="isBusy(user.id)" (click)="toggleDeleted(user)">
                                         @if (isBusy(user.id) && deletingId() === user.id) {
                                         <i class="lni lni-spinner-solid animate-spin" style="font-size:11px;"></i>
                                         } @else {
@@ -126,13 +142,13 @@
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                                             stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="3 6 5 6 21 6" />
-                                            <path
-                                                d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6" />
+                                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6" />
                                             <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
                                         </svg>
                                         }
                                         Delete
                                     </button>
+                                    }
                                 </div>
                                 } @else {
                                 <span class="inline-flex items-center gap-1.5 text-xs text-neutral-400 bg-neutral-50 px-2.5 py-1 rounded-lg">
@@ -188,10 +204,17 @@
                                 (click)="toggleStatus(user)">
                                 {{ user.active ? 'Deactivate' : 'Activate' }}
                             </button>
+                            @if (user.deleted) {
+                            <button class="action-btn action-btn--restore" [disabled]="isBusy(user.id)"
+                                (click)="toggleDeleted(user)">
+                                Restore
+                            </button>
+                            } @else {
                             <button class="action-btn action-btn--delete" [disabled]="isBusy(user.id)"
-                                (click)="deleteUser(user)">
+                                (click)="toggleDeleted(user)">
                                 Delete
                             </button>
+                            }
                         </div>
                         } @else {
                         <span class="text-xs text-neutral-400">Read only</span>

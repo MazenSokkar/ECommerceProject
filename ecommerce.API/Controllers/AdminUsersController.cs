@@ -58,11 +58,11 @@ public class AdminUsersController(IAdminUserService service) : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> SoftDelete(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> ToggleDeleted(int id, CancellationToken cancellationToken)
     {
-        var result = await service.SoftDeleteAsync(id, cancellationToken);
+        var result = await service.ToggleDeletedAsync(id, cancellationToken);
         return result.IsSuccess
-            ? Ok(ResponseGenerator.GenerateSuccessResponse("User deleted successfully."))
+            ? Ok(ResponseGenerator.GenerateSuccessResponse("Operation completed successfully."))
             : result.ToProblem();
     }
 }
