@@ -128,7 +128,11 @@ namespace ecommerce.Infrastructure.Services
             return Result.Success();
         }
 
-        public async Task<Result> ClearCartAsync(int? userId, string? sessionId, CancellationToken cancellationToken = default)
+       
+        public async Task<Result> ClearCartAsync(
+    int? userId,
+    string? sessionId,
+    CancellationToken cancellationToken = default)
         {
             var cart = userId.HasValue
                 ? await cartRepository.FindByUserIdAsync(userId.Value, cancellationToken)
@@ -139,12 +143,17 @@ namespace ecommerce.Infrastructure.Services
             if (cart is null)
                 return Result.Failure(CartErrors.NotFound);
 
-            cartRepository.RemoveCart(cart);
+            foreach (var item in cart.Items.ToList())
+            {
+                cartRepository.RemoveItem(item);
+            }
+
+            cart.UpdatedAt = DateTime.UtcNow;
+
             await unitOfWork.Complete();
 
             return Result.Success();
         }
-
         private static CartResponse MapToResponse(Cart cart)
         {
             var items = cart.Items.Select(i => new CartItemResponse(
