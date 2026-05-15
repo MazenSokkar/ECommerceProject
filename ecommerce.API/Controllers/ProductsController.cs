@@ -26,6 +26,11 @@ public class ProductsController(IProductService service) : ControllerBase
         [FromQuery] string sortBy = "newest",
         CancellationToken cancellationToken = default)
     {
+        if (page < 1)
+            page = 1;
+        if (pageSize < 1)
+            pageSize = 20;
+
         var result = await service.GetAllAsync(search, categoryId, minPrice, maxPrice, page, pageSize, sortBy, cancellationToken);
         return result.IsSuccess
             ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Products fetched successfully."))

@@ -9,10 +9,12 @@ public class ProductRepository(AppDbContext context) : IProductRepository
 {
     public async Task<Product?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
         => await context.Products
+            .IgnoreQueryFilters()
             .Include(p => p.Merchant)
             .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.Reviews)
+            .Where(p => !p.Deleted)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
     public async Task<(IEnumerable<Product> Items, int Total)> GetAllAsync(
@@ -26,10 +28,11 @@ public class ProductRepository(AppDbContext context) : IProductRepository
         CancellationToken cancellationToken = default)
     {
         var query = context.Products
+            .IgnoreQueryFilters()
             .Include(p => p.Merchant)
             .Include(p => p.Category)
             .Include(p => p.Images)
-           .Include(p => p.Reviews)
+            .Include(p => p.Reviews)
             .Where(p => p.IsActive && !p.Deleted)
             .AsQueryable();
 
@@ -64,14 +67,16 @@ public class ProductRepository(AppDbContext context) : IProductRepository
 
     public async Task<IEnumerable<Product>> GetByMerchantIdAsync(int merchantId, CancellationToken cancellationToken = default)
         => await context.Products
+            .IgnoreQueryFilters()
             .Include(p => p.Category)
             .Include(p => p.Images)
-            .Where(p => p.MerchantId == merchantId)
+            .Where(p => p.MerchantId == merchantId && !p.Deleted)
             .ToListAsync(cancellationToken);
 
     public async Task<IEnumerable<Product>> GetBestSellersAsync(int count, CancellationToken cancellationToken = default)
     {
         return await context.Products
+            .IgnoreQueryFilters()
             .Include(p => p.Images)
             .Include(p => p.Merchant)
             .Include(p => p.Category)
@@ -86,6 +91,7 @@ public class ProductRepository(AppDbContext context) : IProductRepository
     public async Task<IEnumerable<Product>> GetNewArrivalsAsync(int count, CancellationToken cancellationToken = default)
     {
         return await context.Products
+            .IgnoreQueryFilters()
             .Include(p => p.Images)
             .Include(p => p.Merchant)
             .Include(p => p.Category)
@@ -99,6 +105,7 @@ public class ProductRepository(AppDbContext context) : IProductRepository
     public async Task<IEnumerable<Product>> GetFeaturedProductsAsync(int count, CancellationToken cancellationToken = default)
     {
         return await context.Products
+            .IgnoreQueryFilters()
             .Include(p => p.Images)
             .Include(p => p.Merchant)
             .Include(p => p.Category)
