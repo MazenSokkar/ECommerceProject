@@ -1,7 +1,8 @@
 <div class="min-h-screen bg-neutral-50 flex flex-col">
   <!-- Header -->
-  <header class="bg-white border-b border-neutral-200 px-4 sm:px-6 h-16 flex items-center justify-between sticky top-0 z-30 shadow-sm">
-    
+  <header
+    class="bg-white border-b border-neutral-200 px-4 sm:px-6 h-16 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+
     <!-- Left: Logo & Nav -->
     <div class="flex items-center gap-8">
       <!-- Logo -->
@@ -37,14 +38,19 @@
 
       <!-- Wishlist & Cart Icons -->
       <div class="flex items-center gap-2">
-        <a routerLink="/app/wishlist" class="w-10 h-10 rounded-full flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 text-neutral-600 hover:text-primary transition-colors" title="Wishlist">
+        <a routerLink="/app/wishlist"
+          class="w-10 h-10 rounded-full flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 text-neutral-600 hover:text-primary transition-colors"
+          title="Wishlist">
           <i class="lni lni-heart text-xl mt-0.5"></i>
         </a>
-        
-        <a routerLink="/app/cart" class="w-10 h-10 rounded-full flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 text-neutral-600 hover:text-primary transition-colors relative" title="Cart">
+
+        <a routerLink="/app/cart"
+          class="w-10 h-10 rounded-full flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 text-neutral-600 hover:text-primary transition-colors relative"
+          title="Cart">
           <i class="lni lni-cart text-xl mt-0.5"></i>
           @if (cartCount() > 0) {
-          <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center shadow-sm border-2 border-white">
+          <span
+            class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center shadow-sm border-2 border-white">
             {{ cartCount() > 99 ? '99+' : cartCount() }}
           </span>
           }
@@ -52,7 +58,7 @@
       </div>
 
       <div class="h-6 w-px bg-neutral-200 hidden sm:block"></div>
-      
+
       <div class="hidden sm:block">
         <app-theme-toggle />
       </div>
@@ -74,23 +80,23 @@
             <p class="text-xs font-semibold text-neutral-800 truncate">{{ displayName() }}</p>
             <p class="text-xs text-neutral-400 truncate">{{ profile()?.email }}</p>
           </div>
-          
-          <a routerLink="/app/profile" class="w-full text-left px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors flex items-center gap-2">
+
+          <a routerLink="/app/profile"
+            class="w-full text-left px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors flex items-center gap-2">
             <i class="lni lni-user text-sm"></i> Profile
           </a>
 
           @if (isAdmin()) {
-          <a routerLink="/app/admin" class="w-full text-left px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors flex items-center gap-2">
+          <a routerLink="/app/admin"
+            class="w-full text-left px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors flex items-center gap-2">
             <i class="lni lni-dashboard text-sm"></i> Admin Dashboard
           </a>
           }
 
           @if (isCustomer()) {
-          <a routerLink="/app/orders" class="w-full text-left px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors flex items-center gap-2">
+          <a routerLink="/app/orders"
+            class="w-full text-left px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors flex items-center gap-2">
             <i class="lni lni-package text-sm"></i> My Orders
-          </a>
-          <a routerLink="/app/payment" class="w-full text-left px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors flex items-center gap-2">
-            <i class="lni lni-credit-cards text-sm"></i> Payment
           </a>
           }
 
