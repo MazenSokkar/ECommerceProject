@@ -53,3 +53,16 @@
   color: #334155;
   word-break: break-word;
 }
+
+/* ===== Dark mode ===== */
+:host-context(.dark) .profile-info-grid {
+  border-top-color: #334155;
+}
+
+:host-context(.dark) .profile-info-label {
+  color: #64748b;
+}
+
+:host-context(.dark) .profile-info-value {
+  color: #cbd5e1;
+}

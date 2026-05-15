@@ -100,3 +100,50 @@
   background: #dcfce7;
   border-color: #86efac;
 }
+
+/* ===== Dark mode ===== */
+:host-context(.dark) .tab-btn {
+  background: #1E293B;
+  color: #94a3b8;
+}
+
+:host-context(.dark) .tab-btn:hover:not(.tab-btn--active) {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+:host-context(.dark) .action-btn--edit {
+  color: #14b8a6;
+  background: rgba(20, 184, 166, 0.1);
+  border-color: rgba(20, 184, 166, 0.25);
+}
+:host-context(.dark) .action-btn--edit:hover:not(:disabled) {
+  background: rgba(20, 184, 166, 0.18);
+}
+
+:host-context(.dark) .action-btn--toggle {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+:host-context(.dark) .action-btn--toggle:hover:not(:disabled) {
+  background: rgba(245, 158, 11, 0.18);
+}
+
+:host-context(.dark) .action-btn--delete {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+:host-context(.dark) .action-btn--delete:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.18);
+}
+
+:host-context(.dark) .action-btn--restore {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.25);
+}
+:host-context(.dark) .action-btn--restore:hover:not(:disabled) {
+  background: rgba(34, 197, 94, 0.18);
+}

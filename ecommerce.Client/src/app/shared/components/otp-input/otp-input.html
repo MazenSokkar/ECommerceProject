@@ -7,10 +7,10 @@
       maxlength="1"
       [value]="digits()[i]"
       [class]="
-        'w-12 h-12 text-center text-xl font-bold rounded-xl border-2 outline-none transition-all duration-150 bg-white ' +
+        'w-12 h-12 text-center text-xl font-bold rounded-xl border-2 outline-none transition-all duration-150 bg-white dark:bg-[#1E293B] ' +
         (hasError()
           ? 'border-danger text-danger focus:border-danger'
-          : 'border-neutral-200 text-neutral-800 focus:border-primary')
+          : 'border-neutral-200 dark:border-[#334155] text-neutral-800 dark:text-neutral-100 focus:border-primary dark:focus:border-primary-light')
       "
       [attr.aria-label]="'Digit ' + (i + 1) + ' of 6'"
       (input)="onInput(i, $event)"

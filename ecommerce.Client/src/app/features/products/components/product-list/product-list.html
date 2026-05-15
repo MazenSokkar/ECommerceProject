@@ -17,7 +17,8 @@
             [class.bg-[#0E7C7B]]="selectedCategory() === null" [class.text-white]="selectedCategory() === null"
             [class.bg-neutral-100]="selectedCategory() !== null"
             [class.dark:bg-neutral-800]="selectedCategory() !== null"
-            [class.text-neutral-600]="selectedCategory() !== null" (click)="onCategoryChange(null)">
+            [class.text-neutral-600]="selectedCategory() !== null"
+            [class.dark:text-neutral-300]="selectedCategory() !== null" (click)="onCategoryChange(null)">
             All
         </button>
         @for (cat of categories(); track cat.id) {
@@ -25,7 +26,8 @@
             [class.bg-[#0E7C7B]]="selectedCategory() === cat.id" [class.text-white]="selectedCategory() === cat.id"
             [class.bg-neutral-100]="selectedCategory() !== cat.id"
             [class.dark:bg-neutral-800]="selectedCategory() !== cat.id"
-            [class.text-neutral-600]="selectedCategory() !== cat.id" (click)="onCategoryChange(cat.id)">
+            [class.text-neutral-600]="selectedCategory() !== cat.id"
+            [class.dark:text-neutral-300]="selectedCategory() !== cat.id" (click)="onCategoryChange(cat.id)">
             {{ cat.name }}
         </button>
         }
@@ -82,15 +84,15 @@
             </div>
 
             <div class="p-4 space-y-2">
-                <p class="text-xs text-neutral-400">{{ product.categoryName }}</p>
+                <p class="text-xs text-neutral-400 dark:text-neutral-500">{{ product.categoryName }}</p>
                 <h3 class="font-semibold text-neutral-800 dark:text-neutral-100 truncate">{{ product.name }}</h3>
-                <p class="text-xs text-neutral-400">{{ product.merchantStoreName }}</p>
+                <p class="text-xs text-neutral-400 dark:text-neutral-500">{{ product.merchantStoreName }}</p>
 
                 <div class="flex items-center gap-1">
                     <span class="text-[#F59E0B] text-sm">★</span>
                     <span class="text-sm text-neutral-600 dark:text-neutral-300">{{ product.averageRating |
                         number:'1.1-1' }}</span>
-                    <span class="text-xs text-neutral-400">({{ product.reviewCount }})</span>
+                    <span class="text-xs text-neutral-400 dark:text-neutral-500">({{ product.reviewCount }})</span>
                 </div>
 
                 <div class="flex items-center justify-between mt-2">

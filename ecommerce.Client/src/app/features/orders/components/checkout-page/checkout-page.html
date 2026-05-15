@@ -40,7 +40,7 @@
                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
               </div>
-              <p class="text-neutral-400 text-sm">No addresses found. Please add an address first.</p>
+              <p class="text-neutral-400 dark:text-neutral-500 text-sm">No addresses found. Please add an address first.</p>
             </div>
           } @else {
             <div class="space-y-3">
@@ -95,7 +95,7 @@
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-neutral-800 dark:text-neutral-100 truncate">{{ item.productName }}</p>
-                  <p class="text-xs text-neutral-400">x{{ item.quantity }}</p>
+                  <p class="text-xs text-neutral-400 dark:text-neutral-500">x{{ item.quantity }}</p>
                 </div>
                 <span class="text-sm font-bold text-neutral-800 dark:text-neutral-100 flex-shrink-0">
                   ${{ item.subtotal | number:'1.2-2' }}

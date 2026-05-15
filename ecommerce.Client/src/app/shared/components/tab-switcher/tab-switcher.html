@@ -1,4 +1,4 @@
-<div class="flex rounded-xl bg-neutral-100 dark:bg-slate-700 p-1" role="tablist">
+<div class="flex rounded-xl bg-neutral-100 dark:bg-neutral-800 p-1" role="tablist">
   @for (tab of tabs(); track tab.value) {
     <button
       type="button"
@@ -8,8 +8,8 @@
       class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all"
       [class]="
         activeTab() === tab.value
-          ? 'bg-white dark:bg-slate-600 text-neutral-800 dark:text-slate-100 shadow-sm'
-          : 'text-neutral-500 dark:text-slate-400 hover:text-neutral-700 dark:hover:text-slate-200'
+          ? 'bg-white dark:bg-[#1E293B] text-neutral-800 dark:text-neutral-100 shadow-sm'
+          : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
       "
     >
       {{ tab.label }}

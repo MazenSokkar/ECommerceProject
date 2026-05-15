@@ -37,25 +37,25 @@
 }
 
 /* ── Dark mode ────────────────────────────────────────────────── */
-.dark .address-card {
+:host-context(.dark) .address-card {
   border-color: #334155;
 }
 
-.dark .address-card:hover {
+:host-context(.dark) .address-card:hover {
   border-color: #14B8A6;
   background: rgba(20, 184, 166, 0.05);
 }
 
-.dark .address-card--selected {
+:host-context(.dark) .address-card--selected {
   border-color: #14B8A6;
   background: rgba(20, 184, 166, 0.08);
 }
 
-.dark .radio-dot {
+:host-context(.dark) .radio-dot {
   border-color: #475569;
 }
 
-.dark .radio-dot--selected {
+:host-context(.dark) .radio-dot--selected {
   border-color: #14B8A6;
   background: #14B8A6;
 }

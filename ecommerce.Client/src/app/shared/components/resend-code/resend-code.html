@@ -1,7 +1,7 @@
-<p class="text-sm text-neutral-500 dark:text-slate-400">
+<p class="text-sm text-neutral-500 dark:text-neutral-400">
   {{ prompt() }}
   @if (countdown() > 0) {
-    <span class="text-neutral-400 dark:text-slate-500 ms-1">Resend in {{ countdown() }}s</span>
+    <span class="text-neutral-400 dark:text-neutral-500 ms-1">Resend in {{ countdown() }}s</span>
   } @else {
     <button
       type="button"

@@ -1,7 +1,7 @@
 <div class="space-y-12">
   <!-- Banners Slider -->
   @if (bannersLoading()) {
-    <div class="w-full h-64 sm:h-80 md:h-100 bg-neutral-100 dark:bg-slate-800 rounded-2xl animate-pulse flex items-center justify-center shadow-sm">
+    <div class="w-full h-64 sm:h-80 md:h-100 bg-neutral-100 dark:bg-[#1E293B] rounded-2xl animate-pulse flex items-center justify-center shadow-sm">
       <i class="lni lni-spinner-solid animate-spin text-4xl text-primary"></i>
     </div>
   } @else if (banners().length > 0) {
@@ -56,7 +56,7 @@
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">Featured Products</h3>
-          <p class="text-neutral-500 text-sm">Handpicked top quality items for you</p>
+          <p class="text-neutral-500 dark:text-neutral-400 text-sm">Handpicked top quality items for you</p>
         </div>
         <a routerLink="/app/products" class="text-primary font-semibold hover:underline text-sm">View All</a>
       </div>
@@ -75,7 +75,7 @@
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">New Arrivals</h3>
-          <p class="text-neutral-500 text-sm">Be the first to get the latest tech</p>
+          <p class="text-neutral-500 dark:text-neutral-400 text-sm">Be the first to get the latest tech</p>
         </div>
         <a routerLink="/app/products" [queryParams]="{ sortBy: 'newest' }" class="text-primary font-semibold hover:underline text-sm">View All</a>
       </div>
@@ -94,7 +94,7 @@
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-2xl font-bold text-neutral-800 dark:text-neutral-100">Best Sellers</h3>
-          <p class="text-neutral-500 text-sm">Most popular items in our shop</p>
+          <p class="text-neutral-500 dark:text-neutral-400 text-sm">Most popular items in our shop</p>
         </div>
         <a routerLink="/app/products" class="text-primary font-semibold hover:underline text-sm">View All</a>
       </div>
@@ -109,21 +109,21 @@
 
   <!-- Welcome / CTA Section -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="section-card p-8 sm:p-10 flex flex-col justify-center items-start border border-neutral-100 dark:border-slate-700 bg-white dark:bg-slate-800">
+    <div class="section-card p-8 sm:p-10 flex flex-col justify-center items-start">
        <div class="w-14 h-14 rounded-xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center mb-6">
          <i class="lni lni-shopping-basket text-2xl text-primary"></i>
        </div>
-       <h4 class="text-2xl font-extrabold text-neutral-800 dark:text-slate-100 mb-3">Ready to shop?</h4>
-       <p class="text-neutral-500 dark:text-slate-400 mb-8 text-lg">Explore our wide range of products and find exactly what you're looking for.</p>
+       <h4 class="text-2xl font-extrabold text-neutral-800 dark:text-neutral-100 mb-3">Ready to shop?</h4>
+       <p class="text-neutral-500 dark:text-neutral-400 mb-8 text-lg">Explore our wide range of products and find exactly what you're looking for.</p>
        <app-button routerLink="/app/products" variant="primary" class="w-full sm:w-auto">Browse Products</app-button>
     </div>
 
-    <div class="section-card p-8 sm:p-10 flex flex-col justify-center items-start border border-neutral-100 dark:border-slate-700 bg-white dark:bg-slate-800">
+    <div class="section-card p-8 sm:p-10 flex flex-col justify-center items-start">
        <div class="w-14 h-14 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center mb-6">
          <i class="lni lni-heart text-2xl text-secondary"></i>
        </div>
-       <h4 class="text-2xl font-extrabold text-neutral-800 dark:text-slate-100 mb-3">Your Wishlist</h4>
-       <p class="text-neutral-500 dark:text-slate-400 mb-8 text-lg">Save your favorite items and track their availability easily.</p>
+       <h4 class="text-2xl font-extrabold text-neutral-800 dark:text-neutral-100 mb-3">Your Wishlist</h4>
+       <p class="text-neutral-500 dark:text-neutral-400 mb-8 text-lg">Save your favorite items and track their availability easily.</p>
        <app-button routerLink="/app/wishlist" variant="outline" class="w-full sm:w-auto">View Wishlist</app-button>
     </div>
   </div>
@@ -132,9 +132,9 @@
 <!-- Product Card Template -->
 <ng-template #productCard let-product="product">
   <a [routerLink]="['/app/products', product.id]"
-      class="section-card card-stripe hover:shadow-lg transition-shadow cursor-pointer bg-white dark:bg-slate-800 block h-full">
+      class="section-card card-stripe hover:shadow-lg transition-shadow cursor-pointer block h-full">
       <!-- Image -->
-      <div class="h-48 bg-neutral-100 dark:bg-neutral-900 rounded-t-xl overflow-hidden">
+      <div class="h-48 bg-neutral-100 dark:bg-neutral-800 rounded-t-xl overflow-hidden">
           @if (product.primaryImageUrl) {
             <img [src]="product.primaryImageUrl" [alt]="product.name" class="w-full h-full object-cover" />
           } @else {
@@ -147,12 +147,12 @@
       <div class="p-4 space-y-2">
           <p class="text-[10px] uppercase tracking-wider font-bold text-primary">{{ product.categoryName }}</p>
           <h3 class="font-bold text-neutral-800 dark:text-neutral-100 truncate text-sm">{{ product.name }}</h3>
-          <p class="text-xs text-neutral-400">{{ product.merchantStoreName }}</p>
+          <p class="text-xs text-neutral-400 dark:text-neutral-500">{{ product.merchantStoreName }}</p>
 
           <div class="flex items-center gap-1">
               <span class="text-amber-400 text-xs">★</span>
               <span class="text-xs font-bold text-neutral-600 dark:text-neutral-300">{{ product.averageRating | number:'1.1-1' }}</span>
-              <span class="text-[10px] text-neutral-400">({{ product.reviewCount }})</span>
+              <span class="text-[10px] text-neutral-400 dark:text-neutral-500">({{ product.reviewCount }})</span>
           </div>
 
           <div class="flex items-center justify-between mt-3">

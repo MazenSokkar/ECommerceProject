@@ -27,15 +27,15 @@
         </div>
 
         <div class="section-card card-stripe p-6 space-y-4">
-            <p class="text-sm text-neutral-400">{{ product()!.categoryName }}</p>
+            <p class="text-sm text-neutral-400 dark:text-neutral-500">{{ product()!.categoryName }}</p>
             <h1 class="text-2xl font-extrabold text-neutral-800 dark:text-neutral-100">{{ product()!.name }}</h1>
-            <p class="text-sm text-neutral-400">by {{ product()!.merchantStoreName }}</p>
+            <p class="text-sm text-neutral-400 dark:text-neutral-500">by {{ product()!.merchantStoreName }}</p>
 
             <div class="flex items-center gap-1">
                 <span class="text-[#F59E0B]">★</span>
                 <span class="text-neutral-600 dark:text-neutral-300">{{ product()!.averageRating | number:'1.1-1'
                     }}</span>
-                <span class="text-xs text-neutral-400">({{ product()!.reviewCount }} reviews)</span>
+                <span class="text-xs text-neutral-400 dark:text-neutral-500">({{ product()!.reviewCount }} reviews)</span>
             </div>
 
             <p class="text-3xl font-bold text-[#0E7C7B]">${{ product()!.price | number:'1.2-2' }}</p>
@@ -55,7 +55,7 @@
 
               @if (isCustomer() && product()!.stock > 0) {
   <div class="flex items-center gap-3">
-    <span class="text-sm font-medium text-neutral-600">Quantity:</span>
+    <span class="text-sm font-medium text-neutral-600 dark:text-neutral-400">Quantity:</span>
     <div class="flex items-center gap-2">
       <button class="qty-btn" [disabled]="quantity() <= 1" (click)="decreaseQty()">−</button>
       <span class="w-8 text-center font-bold text-sm">{{ quantity() }}</span>

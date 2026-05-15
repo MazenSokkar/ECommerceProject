@@ -37,7 +37,7 @@
                 <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors">
                     <td class="px-4 py-3 text-sm text-neutral-800 dark:text-neutral-100 font-medium">{{ product.name }}
                     </td>
-                    <td class="px-4 py-3 text-sm text-neutral-500">{{ product.categoryName }}</td>
+                    <td class="px-4 py-3 text-sm text-neutral-500 dark:text-neutral-400">{{ product.categoryName }}</td>
                     <td class="px-4 py-3 text-sm text-[#0E7C7B] font-bold">${{ product.price | number:'1.2-2' }}</td>
                     <td class="px-4 py-3 text-sm">
                         @if (product.stock === 0) {
@@ -75,7 +75,7 @@
                     <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">{{ product.name }}</h3>
                     <span class="text-[#0E7C7B] font-bold">${{ product.price | number:'1.2-2' }}</span>
                 </div>
-                <p class="text-sm text-neutral-400">{{ product.categoryName }} · Stock: {{ product.stock }}</p>
+                <p class="text-sm text-neutral-400 dark:text-neutral-500">{{ product.categoryName }} · Stock: {{ product.stock }}</p>
                 <div class="flex gap-2">
                     <a [routerLink]="['../products', product.id, 'edit']"
                         class="btn-primary px-3 py-1 rounded-lg text-xs">Edit</a>

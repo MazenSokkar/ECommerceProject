@@ -130,3 +130,31 @@
   background: #f8fafc;
   flex-shrink: 0;
 }
+
+/* ===== Dark Mode ===== */
+:host-context(.dark) .modal-panel {
+  background: #1E293B;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+:host-context(.dark) .modal-header {
+  border-bottom-color: #334155;
+}
+
+:host-context(.dark) .modal-title {
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .modal-close-btn:hover {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+:host-context(.dark) .address-section {
+  border-top-color: #334155;
+}
+
+:host-context(.dark) .modal-footer {
+  border-top-color: #334155;
+  background: #0F172A;
+}

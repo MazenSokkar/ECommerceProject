@@ -69,22 +69,22 @@
 }
 
 /* ── Dark mode ────────────────────────────────────────────────── */
-.dark .qty-btn {
+:host-context(.dark) .qty-btn {
   background: #1E293B;
   border-color: #334155;
   color: #CBD5E1;
 }
 
-.dark .qty-btn:hover:not(:disabled) {
+:host-context(.dark) .qty-btn:hover:not(:disabled) {
   border-color: #14B8A6;
   color: #14B8A6;
   background: rgba(20, 184, 166, 0.08);
 }
 
-.dark .cart-row:hover {
+:host-context(.dark) .cart-row:hover {
   background: rgba(255, 255, 255, 0.03);
 }
 
-.dark .remove-btn {
+:host-context(.dark) .remove-btn {
   color: #475569;
 }

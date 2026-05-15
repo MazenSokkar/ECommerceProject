@@ -125,3 +125,21 @@
 .cross-icon:hover {
   color: #111;
 }
+
+/* ===== Dark Mode ===== */
+:host-context(.dark) .card {
+  background-color: #1E293B;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 8px 24px;
+}
+
+:host-context(.dark) .sub-text {
+  color: #94a3b8;
+}
+
+:host-context(.dark) .cross-icon {
+  color: #94a3b8;
+}
+
+:host-context(.dark) .cross-icon:hover {
+  color: #e2e8f0;
+}
