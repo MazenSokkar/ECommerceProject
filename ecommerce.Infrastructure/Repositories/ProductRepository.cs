@@ -124,4 +124,6 @@ public class ProductRepository(AppDbContext context) : IProductRepository
 
     public void Delete(Product product)
         => product.Deleted = true;
+    public async Task AddImageAsync(ProductImage image, CancellationToken cancellationToken = default)
+    => await context.ProductImages.AddAsync(image, cancellationToken);
 }
