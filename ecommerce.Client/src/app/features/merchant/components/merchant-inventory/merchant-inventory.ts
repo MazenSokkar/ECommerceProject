@@ -22,7 +22,7 @@ export class MerchantInventory implements OnInit {
         this.api.getMyProducts().subscribe({
             next: res => {
                 if (!res.data) return;
-                this.products.set(res.data.items);
+                this.products.set(res.data);
                 this.loading.set(false);
             },
             error: () => this.loading.set(false),

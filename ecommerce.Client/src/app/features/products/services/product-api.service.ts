@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../../../shared/models/api-response.model';
 import {
     CreateProductRequest,
+    Product,
     ProductDetails,
     ProductFilter,
     ProductListResponse,
@@ -34,8 +35,8 @@ export class ProductApiService {
         return this.http.get<ApiResponse<ProductDetails>>(`${this.base}/${id}`);
     }
 
-    getMyProducts(): Observable<ApiResponse<ProductListResponse>> {
-        return this.http.get<ApiResponse<ProductListResponse>>(`${this.base}/my-products`);
+    getMyProducts(): Observable<ApiResponse<Product[]>> {
+        return this.http.get<ApiResponse<Product[]>>(`${this.base}/my-products`);
     }
 
     create(request: CreateProductRequest): Observable<ApiResponse<ProductDetails>> {

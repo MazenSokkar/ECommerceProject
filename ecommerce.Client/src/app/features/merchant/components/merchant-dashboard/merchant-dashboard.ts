@@ -26,7 +26,7 @@ export class MerchantDashboard implements OnInit {
         this.api.getMyProducts().subscribe({
             next: res => {
                 if (!res.data) return;
-                const items = res.data.items;
+                const items = res.data;
                 this.products.set(items);
                 this.totalProducts.set(items.length);
                 this.outOfStock.set(items.filter(p => p.stock === 0).length);
