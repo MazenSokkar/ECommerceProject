@@ -77,6 +77,16 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/shipping/shipping.routes').then((m) => m.SHIPPING_ROUTES),
       },
+      {
+        path: 'admin',
+        loadChildren: () =>
+          import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES),
+      },
+      {
+        path: 'seller/register',
+        loadComponent: () =>
+          import('./features/merchant/components/seller-register/seller-register').then(m => m.SellerRegister),
+      },
     ],
   },
 

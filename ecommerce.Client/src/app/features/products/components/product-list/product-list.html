@@ -5,44 +5,41 @@
             <h1 class="text-2xl font-extrabold text-white tracking-tight">Products</h1>
             <p class="text-teal-200 text-sm mt-0.5">Browse all available products</p>
         </div>
-        <!-- Search -->
         <input type="text" placeholder="Search products..." class="form-input w-full sm:w-72"
             (input)="onSearch($any($event.target).value)" />
     </div>
 
-    <!-- Filters -->
-    <!-- Categories Filter -->
     <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
         <button class="flex-shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all"
-            [class.bg-[#0E7C7B]]="selectedCategory() === null" [class.text-white]="selectedCategory() === null"
-            [class.bg-neutral-100]="selectedCategory() !== null"
-            [class.dark:bg-neutral-800]="selectedCategory() !== null"
-            [class.text-neutral-600]="selectedCategory() !== null"
-            [class.dark:text-neutral-300]="selectedCategory() !== null" (click)="onCategoryChange(null)">
+            [class.bg-\[#0E7C7B\]]="selectedCategory() === null" [class.text-white]="selectedCategory() === null"
+            [class.bg-neutral-100]="selectedCategory() !== null" [class.text-neutral-600]="selectedCategory() !== null"
+            (click)="onCategoryChange(null)">
             All
         </button>
         @for (cat of categories(); track cat.id) {
         <button class="flex-shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all"
-            [class.bg-[#0E7C7B]]="selectedCategory() === cat.id" [class.text-white]="selectedCategory() === cat.id"
+            [class.bg-\[#0E7C7B\]]="selectedCategory() === cat.id" [class.text-white]="selectedCategory() === cat.id"
             [class.bg-neutral-100]="selectedCategory() !== cat.id"
-            [class.dark:bg-neutral-800]="selectedCategory() !== cat.id"
-            [class.text-neutral-600]="selectedCategory() !== cat.id"
-            [class.dark:text-neutral-300]="selectedCategory() !== cat.id" (click)="onCategoryChange(cat.id)">
+            [class.text-neutral-600]="selectedCategory() !== cat.id" (click)="onCategoryChange(cat.id)">
             {{ cat.name }}
         </button>
         }
     </div>
 
-    <!-- Sort -->
-    <div class="flex gap-3 flex-wrap">
+    <div class="flex gap-3 flex-wrap items-center">
         <select class="form-input w-48" (change)="onSortChange($any($event.target).value)">
             <option value="newest">Newest</option>
             <option value="price_asc">Price: Low to High</option>
             <option value="price_desc">Price: High to Low</option>
         </select>
+
+        <input type="number" placeholder="Min Price" class="form-input w-32"
+            (change)="onMinPriceChange($any($event.target).value)" />
+        <span class="text-neutral-400">—</span>
+        <input type="number" placeholder="Max Price" class="form-input w-32"
+            (change)="onMaxPriceChange($any($event.target).value)" />
     </div>
 
-    <!-- Loading -->
     @if (loading()) {
     <div class="flex justify-center py-24">
         <svg class="animate-spin h-8 w-8 text-[#0E7C7B]" fill="none" viewBox="0 0 24 24">
@@ -52,7 +49,6 @@
     </div>
     }
 
-    <!-- Products Grid -->
     @if (!loading()) {
     @if (products().length === 0) {
     <div class="flex flex-col items-center py-24 gap-4">
@@ -69,7 +65,6 @@
         @for (product of products(); track product.id) {
         <a [routerLink]="['/app/products', product.id]"
             class="section-card card-stripe hover:shadow-lg transition-shadow cursor-pointer">
-            <!-- Image -->
             <div class="h-48 bg-neutral-100 dark:bg-neutral-800 rounded-t-xl overflow-hidden">
                 @if (product.primaryImageUrl) {
                 <img [src]="product.primaryImageUrl" [alt]="product.name" class="w-full h-full object-cover" />
@@ -84,17 +79,15 @@
             </div>
 
             <div class="p-4 space-y-2">
-                <p class="text-xs text-neutral-400 dark:text-neutral-500">{{ product.categoryName }}</p>
+                <p class="text-xs text-neutral-400">{{ product.categoryName }}</p>
                 <h3 class="font-semibold text-neutral-800 dark:text-neutral-100 truncate">{{ product.name }}</h3>
-                <p class="text-xs text-neutral-400 dark:text-neutral-500">{{ product.merchantStoreName }}</p>
-
+                <p class="text-xs text-neutral-400">{{ product.merchantStoreName }}</p>
                 <div class="flex items-center gap-1">
                     <span class="text-[#F59E0B] text-sm">★</span>
                     <span class="text-sm text-neutral-600 dark:text-neutral-300">{{ product.averageRating |
                         number:'1.1-1' }}</span>
-                    <span class="text-xs text-neutral-400 dark:text-neutral-500">({{ product.reviewCount }})</span>
+                    <span class="text-xs text-neutral-400">({{ product.reviewCount }})</span>
                 </div>
-
                 <div class="flex items-center justify-between mt-2">
                     <span class="text-lg font-bold text-[#0E7C7B]">${{ product.price | number:'1.2-2' }}</span>
                     @if (product.stock === 0) {

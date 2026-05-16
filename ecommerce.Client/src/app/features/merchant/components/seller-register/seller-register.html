@@ -1,0 +1,49 @@
+<div class="space-y-6">
+    <div class="page-header rounded-2xl p-5 sm:p-6">
+        <h1 class="text-2xl font-extrabold text-white tracking-tight">Become a Seller</h1>
+        <p class="text-teal-200 text-sm mt-0.5">Register your store and start selling</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 section-card card-stripe p-6">
+            <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+
+                <div>
+                    <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-1">Store
+                        Name</label>
+                    <input formControlName="storeName" class="form-input w-full" placeholder="Enter your store name"
+                        [class.form-input--error]="form.controls.storeName.invalid && form.controls.storeName.touched" />
+                    @if (form.controls.storeName.invalid && form.controls.storeName.touched) {
+                    <p class="text-[#DC2626] text-xs mt-1">Store name is required</p>
+                    }
+                </div>
+
+                <div>
+                    <label
+                        class="block text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-1">Description</label>
+                    <textarea formControlName="description" class="form-input w-full h-28"
+                        placeholder="Describe your store"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-1">Store Logo
+                        URL</label>
+                    <input formControlName="storeLogo" class="form-input w-full" placeholder="https://..." />
+                </div>
+
+                <button type="submit" class="btn-primary w-full py-3 rounded-xl font-bold" [disabled]="loading()">
+                    @if (loading()) { Submitting... } @else { Register as Seller }
+                </button>
+
+            </form>
+        </div>
+
+        <div class="section-card p-6 space-y-3 self-start">
+            <h3 class="font-semibold text-neutral-800 dark:text-neutral-100">How it works</h3>
+            <p class="text-sm text-neutral-400">1. Fill in your store details</p>
+            <p class="text-sm text-neutral-400">2. Submit your registration</p>
+            <p class="text-sm text-neutral-400">3. Wait for admin approval</p>
+            <p class="text-sm text-neutral-400">4. Start selling!</p>
+        </div>
+    </div>
+</div>

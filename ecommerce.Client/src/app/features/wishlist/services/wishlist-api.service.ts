@@ -43,4 +43,10 @@ export class WishlistApiService {
     isInWishlist(productId: number): boolean {
         return this.wishlistProductIds().includes(productId);
     }
+    toggle(productId: number): Observable<any> {
+        if (this.isInWishlist(productId)) {
+            return this.removeItem(productId);
+        }
+        return this.addItem({ productId });
+    }
 }
