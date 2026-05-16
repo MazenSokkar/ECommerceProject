@@ -69,7 +69,8 @@
         <button (click)="toggleUserMenu()"
           class="flex items-center gap-2 rounded-xl px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
           <div class="avatar-circle w-8 h-8 text-sm">{{ initials() }}</div>
-          <span class="hidden sm:block text-sm font-medium text-neutral-700 dark:text-neutral-200">{{ displayName() }}</span>
+          <span class="hidden sm:block text-sm font-medium text-neutral-700 dark:text-neutral-200">{{ displayName()
+            }}</span>
           <i class="lni lni-chevron-down text-neutral-400 dark:text-neutral-500 text-sm"></i>
         </button>
 
@@ -85,6 +86,13 @@
             class="w-full text-left px-3 py-2 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex items-center gap-2">
             <i class="lni lni-user text-sm"></i> Profile
           </a>
+
+          @if (isCustomer() && !isMerchant()) {
+          <a routerLink="/app/merchant/register"
+            class="w-full text-left px-3 py-2 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex items-center gap-2">
+            <i class="lni lni-store text-sm"></i> Become a Seller
+          </a>
+          }
 
           @if (isAdmin()) {
           <a routerLink="/app/admin"
@@ -110,8 +118,6 @@
         </div>
         }
       </div>
-
-
     </div>
   </header>
 
