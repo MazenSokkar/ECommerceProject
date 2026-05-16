@@ -59,6 +59,17 @@
                     }
                 </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-1">Image
+                        URL</label>
+                    <input formControlName="imageUrl" class="form-input w-full"
+                        placeholder="https://example.com/image.jpg" />
+                    @if (form.value.imageUrl) {
+                    <img [src]="form.value.imageUrl" class="mt-2 h-24 w-24 object-cover rounded-lg"
+                        (error)="$any($event.target).style.display='none'" />
+                    }
+                </div>
+
                 <button type="submit" class="btn-primary w-full py-3 rounded-xl font-bold mt-2" [disabled]="loading()">
                     @if (loading()) { Saving... } @else { {{ isEdit() ? 'Update Product' : 'Add Product' }} }
                 </button>
@@ -71,6 +82,10 @@
             <p class="text-sm text-neutral-400">Name: {{ form.value.name || '—' }}</p>
             <p class="text-sm text-neutral-400">Price: ${{ form.value.price || 0 }}</p>
             <p class="text-sm text-neutral-400">Stock: {{ form.value.stock || 0 }}</p>
+            @if (form.value.imageUrl) {
+            <img [src]="form.value.imageUrl" class="w-full h-32 object-cover rounded-lg mt-2"
+                (error)="$any($event.target).style.display='none'" />
+            }
         </div>
     </div>
 </div>

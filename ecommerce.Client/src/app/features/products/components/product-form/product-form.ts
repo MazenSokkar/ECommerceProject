@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductApiService } from '../../services/product-api.service';
-import { submit } from '@angular/forms/signals';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
     selector: 'app-product-form',
@@ -17,6 +18,7 @@ export class ProductForm implements OnInit {
     private readonly fb = inject(FormBuilder);
     private readonly router = inject(Router);
     private readonly route = inject(ActivatedRoute);
+    private readonly http = inject(HttpClient);
 
     protected readonly loading = signal(false);
     protected readonly isEdit = signal(false);
@@ -28,6 +30,7 @@ export class ProductForm implements OnInit {
         price: [0, [Validators.required, Validators.min(0.01)]],
         stock: [0, [Validators.required, Validators.min(0)]],
         categoryId: [0, [Validators.required, Validators.min(1)]],
+        imageUrl: [''],
     });
 
     ngOnInit(): void {
@@ -55,8 +58,15 @@ export class ProductForm implements OnInit {
             : this.api.create(value);
 
         request$.subscribe({
-            next: () => {
+            next: (res) => {
                 this.loading.set(false);
+                if (value.imageUrl && res.data) {
+                    this.http.post(`${environment.apiUrl}/products/${res.data.id}/images`, {
+                        imageUrl: value.imageUrl,
+                        isPrimary: true,
+                        sortOrder: 0
+                    }).subscribe();
+                }
                 this.router.navigate(['/app/merchant/inventory']);
             },
             error: () => this.loading.set(false),
