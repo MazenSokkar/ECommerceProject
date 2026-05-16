@@ -1,0 +1,52 @@
+<div class="space-y-6">
+    <div class="page-header rounded-2xl p-5 sm:p-6">
+        <h1 class="text-2xl font-extrabold text-white tracking-tight">Manage Categories</h1>
+        <p class="text-teal-200 text-sm mt-0.5">{{ categories().length }} categories</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="section-card card-stripe p-6">
+            <h3 class="font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Add Category</h3>
+            <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-3">
+                <input formControlName="name" class="form-input w-full" placeholder="Category name"
+                    [class.form-input--error]="form.controls.name.invalid && form.controls.name.touched" />
+                <select formControlName="parentId" class="form-input w-full">
+                    <option [ngValue]="null">No parent (root)</option>
+                    @for (cat of categories(); track cat.id) {
+                    <option [ngValue]="cat.id">{{ cat.name }}</option>
+                    }
+                </select>
+                <input formControlName="imageUrl" class="form-input w-full" placeholder="Image URL (optional)" />
+                <button type="submit" class="btn-primary w-full py-2 rounded-xl text-sm font-bold"
+                    [disabled]="submitting()">
+                    @if (submitting()) { Adding... } @else { Add Category }
+                </button>
+            </form>
+        </div>
+
+        <div class="lg:col-span-2 data-card">
+            <table class="w-full">
+                <thead class="table-head">
+                    <tr>
+                        <th class="px-4 py-3 text-start text-sm font-semibold text-white">Name</th>
+                        <th class="px-4 py-3 text-start text-sm font-semibold text-white">Slug</th>
+                        <th class="px-4 py-3 text-start text-sm font-semibold text-white">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-neutral-100 dark:divide-neutral-700">
+                    @for (cat of categories(); track cat.id) {
+                    <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800">
+                        <td class="px-4 py-3 text-sm font-medium text-neutral-800 dark:text-neutral-100">{{ cat.name }}
+                        </td>
+                        <td class="px-4 py-3 text-sm text-neutral-500">{{ cat.slug }}</td>
+                        <td class="px-4 py-3">
+                            <button class="btn-danger px-3 py-1 rounded-lg text-xs"
+                                (click)="deleteCategory(cat.id)">Delete</button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

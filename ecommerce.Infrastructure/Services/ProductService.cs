@@ -198,4 +198,15 @@ public class ProductService(
 
         return Result.Success();
     }
+    public async Task<Result> AdminDeleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var product = await repository.FindByIdAsync(id, cancellationToken);
+        if (product is null)
+            return Result.Failure(ProductErrors.NotFound);
+
+        repository.Delete(product);
+        await unitOfWork.Complete();
+
+        return Result.Success();
+    }
 }

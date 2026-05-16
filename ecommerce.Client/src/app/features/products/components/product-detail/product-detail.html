@@ -1,88 +1,129 @@
 <div class="space-y-6">
-    @if (loading()) {
-    <div class="flex justify-center py-24">
-        <svg class="animate-spin h-8 w-8 text-[#0E7C7B]" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-        </svg>
-    </div>
-    }
+  @if (loading()) {
+  <div class="flex justify-center py-24">
+    <svg class="animate-spin h-8 w-8 text-[#0E7C7B]" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+    </svg>
+  </div>
+  }
 
-    @if (!loading() && product()) {
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  @if (!loading() && product()) {
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        <div class="section-card p-4 space-y-3">
-            <div class="h-72 bg-neutral-100 dark:bg-neutral-800 rounded-xl overflow-hidden">
-                @if (selectedImage()) {
-                <img [src]="selectedImage()!" alt="product" class="w-full h-full object-cover" />
-                }
-            </div>
-            <div class="flex gap-2 flex-wrap">
-                @for (img of product()!.images; track img) {
-                <img [src]="img" class="w-16 h-16 rounded-lg object-cover cursor-pointer border-2"
-                    [class.border-[#0E7C7B]]="selectedImage() === img"
-                    [class.border-transparent]="selectedImage() !== img" (click)="selectImage(img)" />
-                }
-            </div>
+    <div class="section-card p-4 space-y-3">
+      <div class="h-72 bg-neutral-100 dark:bg-neutral-800 rounded-xl overflow-hidden">
+        @if (selectedImage()) {
+        <img [src]="selectedImage()!" alt="product" class="w-full h-full object-cover" />
+        } @else {
+        <div class="w-full h-full flex items-center justify-center text-neutral-400">
+          <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
         </div>
+        }
+      </div>
+      <div class="flex gap-2 flex-wrap">
+        @for (img of product()!.images; track img) {
+        <img [src]="img" class="w-16 h-16 rounded-lg object-cover cursor-pointer border-2"
+          [class.border-\[#0E7C7B\]]="selectedImage() === img" [class.border-transparent]="selectedImage() !== img"
+          (click)="selectImage(img)" />
+        }
+      </div>
+    </div>
 
-        <div class="section-card card-stripe p-6 space-y-4">
-            <p class="text-sm text-neutral-400 dark:text-neutral-500">{{ product()!.categoryName }}</p>
-            <h1 class="text-2xl font-extrabold text-neutral-800 dark:text-neutral-100">{{ product()!.name }}</h1>
-            <p class="text-sm text-neutral-400 dark:text-neutral-500">by {{ product()!.merchantStoreName }}</p>
+    <div class="section-card card-stripe p-6 space-y-4">
+      <p class="text-sm text-neutral-400">{{ product()!.categoryName }}</p>
+      <h1 class="text-2xl font-extrabold text-neutral-800 dark:text-neutral-100">{{ product()!.name }}</h1>
+      <p class="text-sm text-neutral-400">by {{ product()!.merchantStoreName }}</p>
 
-            <div class="flex items-center gap-1">
-                <span class="text-[#F59E0B]">★</span>
-                <span class="text-neutral-600 dark:text-neutral-300">{{ product()!.averageRating | number:'1.1-1'
-                    }}</span>
-                <span class="text-xs text-neutral-400 dark:text-neutral-500">({{ product()!.reviewCount }} reviews)</span>
-            </div>
+      <div class="flex items-center gap-1">
+        <span class="text-[#F59E0B]">★</span>
+        <span class="text-neutral-600 dark:text-neutral-300">{{ product()!.averageRating | number:'1.1-1' }}</span>
+        <span class="text-xs text-neutral-400">({{ product()!.reviewCount }} reviews)</span>
+      </div>
 
-            <p class="text-3xl font-bold text-[#0E7C7B]">${{ product()!.price | number:'1.2-2' }}</p>
+      <p class="text-3xl font-bold text-[#0E7C7B]">${{ product()!.price | number:'1.2-2' }}</p>
 
-            @if (product()!.stock === 0) {
-            <span class="text-red-500 font-medium">Out of Stock</span>
-            } @else if (product()!.stock <= 5) { <span class="text-amber-500 font-medium">Only {{ product()!.stock }}
-                left!</span>
-                } @else {
-                <span class="text-green-600 font-medium">In Stock</span>
-                }
+      @if (product()!.stock === 0) {
+      <span class="text-red-500 font-medium">Out of Stock</span>
+      } @else if (product()!.stock <= 5) { <span class="text-amber-500 font-medium">Only {{ product()!.stock }}
+        left!</span>
+        } @else {
+        <span class="text-green-600 font-medium">In Stock</span>
+        }
 
-                @if (product()!.description) {
-                <p class="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">{{ product()!.description }}
-                </p>
-                }
+        @if (product()!.description) {
+        <p class="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">{{ product()!.description }}</p>
+        }
 
-              @if (isCustomer() && product()!.stock > 0) {
-  <div class="flex items-center gap-3">
-    <span class="text-sm font-medium text-neutral-600 dark:text-neutral-400">Quantity:</span>
-    <div class="flex items-center gap-2">
-      <button class="qty-btn" [disabled]="quantity() <= 1" (click)="decreaseQty()">−</button>
-      <span class="w-8 text-center font-bold text-sm">{{ quantity() }}</span>
-      <button class="qty-btn" [disabled]="quantity() >= product()!.stock" (click)="increaseQty()">+</button>
+        <div class="flex gap-3 pt-2">
+          <button class="btn-primary px-6 py-3 rounded-xl font-bold flex-1" [disabled]="product()!.stock === 0">
+            Add to Cart
+          </button>
+          <button class="px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 transition-colors"
+            [class.text-[#EC4899]]="inWishlist()" [class.text-neutral-400]="!inWishlist()" (click)="toggleWishlist()"
+            [disabled]="wishlistLoading()">
+            {{ inWishlist() ? '♥' : '♡' }}
+          </button>
+        </div>
     </div>
   </div>
-}
 
-<div class="flex gap-3 pt-2">
-  @if (isCustomer()) {
-    <button class="btn-primary px-6 py-3 rounded-xl font-bold flex-1"
-      [disabled]="product()!.stock === 0 || addingToCart()"
-      (click)="addToCart()">
-      @if (addingToCart()) {
-        <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-        </svg>
-        Adding...
-      } @else {
-        Add to Cart
-      }
-    </button>
-  }
-  <button class="btn-accent px-4 py-3 rounded-xl">♡</button>
-</div>
-        </div>
+  <!-- Reviews Section -->
+  <div class="section-card card-stripe p-6 space-y-4">
+    <h2 class="text-lg font-bold text-neutral-800 dark:text-neutral-100">
+      Reviews ({{ product()!.reviewCount }})
+    </h2>
+
+    @if (isAuthenticated()) {
+    <div class="space-y-3 border-b border-neutral-100 dark:border-neutral-700 pb-4">
+      <h3 class="text-sm font-medium text-neutral-600 dark:text-neutral-300">Write a Review</h3>
+
+      <div class="flex gap-1">
+        @for (star of [1,2,3,4,5]; track star) {
+        <button class="text-2xl transition-colors" [class.text-\[#F59E0B\]]="selectedRating() >= star"
+          [class.text-neutral-300]="selectedRating() < star" (click)="setRating(star)">★</button>
+        }
+      </div>
+
+      <textarea class="form-input w-full h-24" placeholder="Write your review..."
+        (input)="reviewComment.set($any($event.target).value)"></textarea>
+
+      <button class="btn-primary px-6 py-2 rounded-xl text-sm font-bold" (click)="submitReview()"
+        [disabled]="selectedRating() === 0 || submittingReview()">
+        @if (submittingReview()) { Submitting... } @else { Submit Review }
+      </button>
     </div>
     }
+
+    @if (reviews().length === 0) {
+    <p class="text-neutral-400 text-sm">No reviews yet.</p>
+    } @else {
+    <div class="space-y-4">
+      @for (review of reviews(); track review.id) {
+      <div class="flex gap-3">
+        <div
+          class="avatar-circle w-10 h-10 flex-shrink-0 flex items-center justify-center text-white font-bold text-sm">
+          {{ review.userName.charAt(0) }}
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2">
+            <span class="font-medium text-sm text-neutral-800 dark:text-neutral-100">{{ review.userName }}</span>
+            <span class="text-[#F59E0B] text-sm">
+              @for (star of [1,2,3,4,5]; track star) {
+              {{ star <= review.rating ? '★' : '☆' }} } </span>
+          </div>
+          @if (review.comment) {
+          <p class="text-sm text-neutral-600 dark:text-neutral-300 mt-1">{{ review.comment }}</p>
+          }
+          <p class="text-xs text-neutral-400 mt-1">{{ review.createdAt | date:'mediumDate' }}</p>
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </div>
+  }
 </div>

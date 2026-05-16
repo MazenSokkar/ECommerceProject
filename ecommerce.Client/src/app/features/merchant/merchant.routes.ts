@@ -26,6 +26,11 @@ export const MERCHANT_ROUTES: Routes = [
                 loadComponent: () =>
                     import('../products/components/product-form/product-form').then(m => m.ProductForm),
             },
+            {
+                path: 'register',
+                loadComponent: () =>
+                    import('./components/seller-register/seller-register').then(m => m.SellerRegister),
+            },
         ],
     },
 ];

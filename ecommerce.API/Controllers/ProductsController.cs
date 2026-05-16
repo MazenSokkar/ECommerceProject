@@ -95,4 +95,13 @@ public class ProductsController(IProductService service) : ControllerBase
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Stock updated successfully."))
             : result.ToProblem();
     }
+    [HttpDelete("admin/{id}")]
+    [Authorize(Roles = DefaultRoles.Admin)]
+    public async Task<IActionResult> AdminDelete(int id, CancellationToken cancellationToken)
+    {
+        var result = await service.AdminDeleteAsync(id, cancellationToken);
+        return result.IsSuccess
+            ? Ok(ResponseGenerator.GenerateSuccessResponse("Product deleted successfully."))
+            : result.ToProblem();
+    }
 }

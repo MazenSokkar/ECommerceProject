@@ -1,0 +1,48 @@
+<div class="space-y-6">
+    <div class="page-header rounded-2xl p-5 sm:p-6">
+        <h1 class="text-2xl font-extrabold text-white tracking-tight">Manage Products</h1>
+        <p class="text-teal-200 text-sm mt-0.5">{{ products().length }} products total</p>
+    </div>
+
+    @if (loading()) {
+    <div class="flex justify-center py-24">
+        <svg class="animate-spin h-8 w-8 text-[#0E7C7B]" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+        </svg>
+    </div>
+    }
+
+    @if (!loading()) {
+    <div class="data-card">
+        <table class="hidden sm:table w-full">
+            <thead class="table-head">
+                <tr>
+                    <th class="px-4 py-3 text-start text-sm font-semibold text-white">Product</th>
+                    <th class="px-4 py-3 text-start text-sm font-semibold text-white">Category</th>
+                    <th class="px-4 py-3 text-start text-sm font-semibold text-white">Seller</th>
+                    <th class="px-4 py-3 text-start text-sm font-semibold text-white">Price</th>
+                    <th class="px-4 py-3 text-start text-sm font-semibold text-white">Stock</th>
+                    <th class="px-4 py-3 text-start text-sm font-semibold text-white">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-100 dark:divide-neutral-700">
+                @for (product of products(); track product.id) {
+                <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors">
+                    <td class="px-4 py-3 text-sm font-medium text-neutral-800 dark:text-neutral-100">{{ product.name }}
+                    </td>
+                    <td class="px-4 py-3 text-sm text-neutral-500">{{ product.categoryName }}</td>
+                    <td class="px-4 py-3 text-sm text-neutral-500">{{ product.merchantStoreName }}</td>
+                    <td class="px-4 py-3 text-sm font-bold text-[#0E7C7B]">${{ product.price }}</td>
+                    <td class="px-4 py-3 text-sm text-neutral-500">{{ product.stock }}</td>
+                    <td class="px-4 py-3">
+                        <button class="btn-danger px-3 py-1 rounded-lg text-xs"
+                            (click)="deleteProduct(product.id)">Delete</button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>
