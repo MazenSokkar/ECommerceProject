@@ -36,6 +36,9 @@ public class AuthRepository(
     public async Task AssignRoleAsync(ApplicationUser user, string role)
         => await userManager.AddToRoleAsync(user, role);
 
+    public async Task RemoveRoleAsync(ApplicationUser user, string role)
+        => await userManager.RemoveFromRoleAsync(user, role);
+
     public async Task<IList<string>> GetRolesAsync(ApplicationUser user)
         => await userManager.GetRolesAsync(user);
 

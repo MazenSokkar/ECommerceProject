@@ -44,6 +44,16 @@ public class SellersController(IMerchantService service) : ControllerBase
             : result.ToProblem();
     }
 
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> GetMe(CancellationToken cancellationToken)
+    {
+        var result = await service.GetMeAsync(GetCurrentUserId(), cancellationToken);
+        return result.IsSuccess
+            ? Ok(ResponseGenerator.GenerateSuccessResponse(result.Value, "Profile fetched successfully."))
+            : result.ToProblem();
+    }
+
     [HttpPut("me")]
     [Authorize(Roles = DefaultRoles.Merchant)]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateMerchantRequest request, CancellationToken cancellationToken)

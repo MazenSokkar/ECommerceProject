@@ -16,6 +16,7 @@ public interface IAuthRepository
     Task<bool> CheckEmailAvailabilityAsync(string email);
     Task<bool> CheckPhoneAvailabilityAsync(string phone);
     Task AssignRoleAsync(ApplicationUser user, string role);
+    Task RemoveRoleAsync(ApplicationUser user, string role);
     Task<IList<string>> GetRolesAsync(ApplicationUser user);
     Task SetOtpAsync(ApplicationUser user, string otp, int expiryMinutes = 10);
     Task<(string? Otp, DateTime? Expiry)> GetOtpAsync(ApplicationUser user);
