@@ -104,4 +104,13 @@ public class ProductsController(IProductService service) : ControllerBase
             ? Ok(ResponseGenerator.GenerateSuccessResponse("Product deleted successfully."))
             : result.ToProblem();
     }
+    [HttpPost("{id}/images")]
+    [Authorize(Roles = DefaultRoles.Merchant)]
+    public async Task<IActionResult> AddImage(int id, [FromBody] AddProductImageRequest request, CancellationToken cancellationToken)
+    {
+        var result = await service.AddImageAsync(id, request, cancellationToken);
+        return result.IsSuccess
+            ? Ok(ResponseGenerator.GenerateSuccessResponse("Image added successfully."))
+            : result.ToProblem();
+    }
 }

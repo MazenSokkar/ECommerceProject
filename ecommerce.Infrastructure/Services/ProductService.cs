@@ -5,6 +5,7 @@ using ecommerce.Core.Entities;
 using ecommerce.Core.IRepositories;
 using ecommerce.Core.IServices;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace ecommerce.Infrastructure.Services;
 
@@ -205,6 +206,25 @@ public class ProductService(
             return Result.Failure(ProductErrors.NotFound);
 
         repository.Delete(product);
+        await unitOfWork.Complete();
+
+        return Result.Success();
+    }
+    public async Task<Result> AddImageAsync(int productId, AddProductImageRequest request, CancellationToken cancellationToken = default)
+    {
+        var product = await repository.FindByIdAsync(productId, cancellationToken);
+        if (product is null)
+            return Result.Failure(ProductErrors.NotFound);
+
+        var image = new ProductImage
+        {
+            ProductId = productId,
+            ImageUrl = request.ImageUrl,
+            IsPrimary = request.IsPrimary,
+            SortOrder = request.SortOrder
+        };
+
+        await repository.AddImageAsync(image, cancellationToken);
         await unitOfWork.Complete();
 
         return Result.Success();
