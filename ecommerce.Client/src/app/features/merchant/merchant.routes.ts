@@ -3,6 +3,11 @@ import { roleGuard } from '../../core/guards/role.guard';
 
 export const MERCHANT_ROUTES: Routes = [
     {
+        path: 'register',
+        loadComponent: () =>
+            import('./components/seller-register/seller-register').then(m => m.SellerRegister),
+    },
+    {
         path: '',
         canActivate: [roleGuard('Merchant')],
         children: [
@@ -25,11 +30,6 @@ export const MERCHANT_ROUTES: Routes = [
                 path: 'products/:id/edit',
                 loadComponent: () =>
                     import('../products/components/product-form/product-form').then(m => m.ProductForm),
-            },
-            {
-                path: 'register',
-                loadComponent: () =>
-                    import('./components/seller-register/seller-register').then(m => m.SellerRegister),
             },
         ],
     },
