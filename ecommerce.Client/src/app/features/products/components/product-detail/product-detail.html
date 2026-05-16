@@ -11,6 +11,7 @@
   @if (!loading() && product()) {
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
+    <!-- Images -->
     <div class="section-card p-4 space-y-3">
       <div class="h-72 bg-neutral-100 dark:bg-neutral-800 rounded-xl overflow-hidden">
         @if (selectedImage()) {
@@ -27,12 +28,13 @@
       <div class="flex gap-2 flex-wrap">
         @for (img of product()!.images; track img) {
         <img [src]="img" class="w-16 h-16 rounded-lg object-cover cursor-pointer border-2"
-          [class.border-\[#0E7C7B\]]="selectedImage() === img" [class.border-transparent]="selectedImage() !== img"
+          [class.border-[#0E7C7B]]="selectedImage() === img" [class.border-transparent]="selectedImage() !== img"
           (click)="selectImage(img)" />
         }
       </div>
     </div>
 
+    <!-- Info -->
     <div class="section-card card-stripe p-6 space-y-4">
       <p class="text-sm text-neutral-400">{{ product()!.categoryName }}</p>
       <h1 class="text-2xl font-extrabold text-neutral-800 dark:text-neutral-100">{{ product()!.name }}</h1>
@@ -58,10 +60,34 @@
         <p class="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">{{ product()!.description }}</p>
         }
 
+        <!-- Quantity -->
+        @if (isCustomer() && product()!.stock > 0) {
+        <div class="flex items-center gap-3">
+          <span class="text-sm font-medium text-neutral-600">Quantity:</span>
+          <div class="flex items-center gap-2">
+            <button class="qty-btn" [disabled]="quantity() <= 1" (click)="decreaseQty()">−</button>
+            <span class="w-8 text-center font-bold text-sm">{{ quantity() }}</span>
+            <button class="qty-btn" [disabled]="quantity() >= product()!.stock" (click)="increaseQty()">+</button>
+          </div>
+        </div>
+        }
+
+        <!-- Actions -->
         <div class="flex gap-3 pt-2">
-          <button class="btn-primary px-6 py-3 rounded-xl font-bold flex-1" [disabled]="product()!.stock === 0">
+          @if (isCustomer()) {
+          <button class="btn-primary px-6 py-3 rounded-xl font-bold flex-1"
+            [disabled]="product()!.stock === 0 || addingToCart()" (click)="addToCart()">
+            @if (addingToCart()) {
+            <svg class="animate-spin w-4 h-4 inline" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+            </svg>
+            Adding...
+            } @else {
             Add to Cart
+            }
           </button>
+          }
           <button class="px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 transition-colors"
             [class.text-[#EC4899]]="inWishlist()" [class.text-neutral-400]="!inWishlist()" (click)="toggleWishlist()"
             [disabled]="wishlistLoading()">
@@ -80,17 +106,14 @@
     @if (isAuthenticated()) {
     <div class="space-y-3 border-b border-neutral-100 dark:border-neutral-700 pb-4">
       <h3 class="text-sm font-medium text-neutral-600 dark:text-neutral-300">Write a Review</h3>
-
       <div class="flex gap-1">
         @for (star of [1,2,3,4,5]; track star) {
-        <button class="text-2xl transition-colors" [class.text-\[#F59E0B\]]="selectedRating() >= star"
+        <button class="text-2xl transition-colors" [class.text-[#F59E0B]]="selectedRating() >= star"
           [class.text-neutral-300]="selectedRating() < star" (click)="setRating(star)">★</button>
         }
       </div>
-
       <textarea class="form-input w-full h-24" placeholder="Write your review..."
         (input)="reviewComment.set($any($event.target).value)"></textarea>
-
       <button class="btn-primary px-6 py-2 rounded-xl text-sm font-bold" (click)="submitReview()"
         [disabled]="selectedRating() === 0 || submittingReview()">
         @if (submittingReview()) { Submitting... } @else { Submit Review }

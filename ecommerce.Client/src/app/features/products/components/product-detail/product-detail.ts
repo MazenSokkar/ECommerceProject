@@ -1,12 +1,15 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductApiService } from '../../services/product-api.service';
 import { ProductDetails } from '../../models/product.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment';
 import { WishlistApiService } from '../../../wishlist/services/wishlist-api.service';
+import { CartApiService } from '../../../cart/services/cart-api-service';
+import { ToastService } from '../../../../core/services/toast.service';
+import { ROLES } from '../../../../shared/models/roles.model';
 
 interface Review {
   id: number;
@@ -31,6 +34,8 @@ export class ProductDetail implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly http = inject(HttpClient);
   private readonly wishlistApi = inject(WishlistApiService);
+  private readonly cartApi = inject(CartApiService);
+  private readonly toast = inject(ToastService);
 
   protected readonly product = signal<ProductDetails | null>(null);
   protected readonly loading = signal(false);
@@ -42,6 +47,9 @@ export class ProductDetail implements OnInit {
   protected readonly isAuthenticated = computed(() => this.auth.isAuthenticated());
   protected readonly inWishlist = signal(false);
   protected readonly wishlistLoading = signal(false);
+  protected readonly addingToCart = signal(false);
+  protected readonly quantity = signal(1);
+  protected readonly isCustomer = computed(() => this.auth.hasRole(ROLES.Customer));
 
   private productId = 0;
 
@@ -55,8 +63,6 @@ export class ProductDetail implements OnInit {
         this.product.set(res.data);
         this.selectedImage.set(res.data.images[0] ?? null);
         this.loading.set(false);
-        this.wishlistApi.getMyWishlist().subscribe();
-        this.inWishlist.set(this.wishlistApi.isInWishlist(this.productId));
       },
       error: () => this.loading.set(false),
     });
@@ -94,6 +100,31 @@ export class ProductDetail implements OnInit {
         this.wishlistLoading.set(false);
       },
       error: () => this.wishlistLoading.set(false),
+    });
+  }
+
+  increaseQty(): void {
+    const max = this.product()?.stock ?? 1;
+    if (this.quantity() < max) this.quantity.update(q => q + 1);
+  }
+
+  decreaseQty(): void {
+    if (this.quantity() > 1) this.quantity.update(q => q - 1);
+  }
+
+  addToCart(): void {
+    const p = this.product();
+    if (!p || p.stock === 0) return;
+    this.addingToCart.set(true);
+    this.cartApi.addItem({ productId: p.id, quantity: this.quantity() }).subscribe({
+      next: () => {
+        this.addingToCart.set(false);
+        this.toast.success('Added to Cart', `${p.name} added to your cart.`);
+      },
+      error: () => {
+        this.addingToCart.set(false);
+        this.toast.error('Failed', 'Could not add item to cart.');
+      },
     });
   }
 
