@@ -49,6 +49,22 @@ import { RouterLink } from '@angular/router';
           </p>
         </a>
 
+        <!-- Manage Merchants Card -->
+        <a
+          routerLink="../merchants"
+          class="section-card p-6 block hover:-translate-y-1 hover:shadow-lg transition-all group"
+        >
+          <div
+            class="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+          >
+            <i class="lni lni-store text-2xl text-green-600"></i>
+          </div>
+          <h3 class="text-lg font-bold text-neutral-800 dark:text-slate-100">Manage Merchants</h3>
+          <p class="text-sm text-neutral-500 dark:text-slate-400 mt-1">
+            Review pending merchant applications and approve or reject stores.
+          </p>
+        </a>
+
         <!-- All Orders Card -->
         <a
           routerLink="/app/orders"

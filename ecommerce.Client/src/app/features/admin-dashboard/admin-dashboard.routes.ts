@@ -19,4 +19,11 @@ export const ADMIN_DASHBOARD_ROUTES: Routes = [
         (m) => m.AdminBannersPage
       ),
   },
+  {
+    path: 'merchants',
+    loadComponent: () =>
+      import('./components/admin-merchants-page/admin-merchants-page').then(
+        (m) => m.AdminMerchantsPage
+      ),
+  },
 ];

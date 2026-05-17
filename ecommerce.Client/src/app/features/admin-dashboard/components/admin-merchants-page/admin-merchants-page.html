@@ -1,0 +1,183 @@
+<div class="space-y-6">
+    <div class="page-header rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-extrabold text-white tracking-tight">Merchants</h1>
+            <p class="text-teal-200 text-sm mt-0.5">Review and manage merchant applications</p>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="p-5 sm:p-6 space-y-4">
+
+            <!-- Status filter tabs -->
+            <div class="flex flex-wrap gap-2">
+                <button class="tab-btn" [class.tab-btn--active]="statusFilter() === 'All'"
+                    (click)="setFilter('All')">
+                    All
+                    <span class="ml-1.5 text-xs font-bold opacity-70">({{ counts().all }})</span>
+                </button>
+                <button class="tab-btn" [class.tab-btn--active]="statusFilter() === 'Pending'"
+                    (click)="setFilter('Pending')">
+                    Pending
+                    <span class="ml-1.5 text-xs font-bold opacity-70">({{ counts().pending }})</span>
+                </button>
+                <button class="tab-btn" [class.tab-btn--active]="statusFilter() === 'Approved'"
+                    (click)="setFilter('Approved')">
+                    Approved
+                    <span class="ml-1.5 text-xs font-bold opacity-70">({{ counts().approved }})</span>
+                </button>
+                <button class="tab-btn" [class.tab-btn--active]="statusFilter() === 'Rejected'"
+                    (click)="setFilter('Rejected')">
+                    Rejected
+                    <span class="ml-1.5 text-xs font-bold opacity-70">({{ counts().rejected }})</span>
+                </button>
+            </div>
+
+            @if (loading()) {
+            <div class="py-24 flex items-center justify-center">
+                <i class="lni lni-spinner-solid animate-spin text-primary text-3xl"></i>
+            </div>
+            } @else {
+            @if (!filtered().length) {
+            <div class="py-24 flex flex-col items-center gap-3 text-neutral-400">
+                <div class="empty-icon-box w-12 h-12 flex items-center justify-center rounded-2xl">🏪</div>
+                <p>No merchants found.</p>
+            </div>
+            } @else {
+            <div class="data-card p-0 overflow-hidden">
+                <table class="hidden sm:table w-full text-sm">
+                    <thead class="table-head">
+                        <tr>
+                            <th class="text-left px-4 py-3">Store</th>
+                            <th class="text-left px-4 py-3">Registered</th>
+                            <th class="text-left px-4 py-3">Status</th>
+                            <th class="text-left px-4 py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (merchant of filtered(); track merchant.id) {
+                        <tr class="border-b border-neutral-100 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
+                            <td class="px-4 py-3">
+                                <div class="flex items-center gap-3">
+                                    @if (merchant.storeLogo) {
+                                    <img [src]="merchant.storeLogo" [alt]="merchant.storeName"
+                                        class="w-10 h-10 rounded-xl object-cover" />
+                                    } @else {
+                                    <div class="avatar-circle">{{ merchant.storeName[0] }}</div>
+                                    }
+                                    <div>
+                                        <p class="font-semibold text-neutral-800 dark:text-neutral-100">
+                                            {{ merchant.storeName }}
+                                        </p>
+                                        @if (merchant.description) {
+                                        <p class="text-xs text-neutral-400 dark:text-neutral-500 max-w-xs truncate">
+                                            {{ merchant.description }}
+                                        </p>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 text-neutral-500 dark:text-neutral-400 text-xs">
+                                {{ merchant.createdAt | date:'mediumDate' }}
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                    [class.status-active]="merchant.status === 'Approved'"
+                                    [class.bg-yellow-100]="merchant.status === 'Pending'"
+                                    [class.text-yellow-700]="merchant.status === 'Pending'"
+                                    [class.bg-red-100]="merchant.status === 'Rejected'"
+                                    [class.text-red-600]="merchant.status === 'Rejected'">
+                                    {{ merchant.status }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="table-actions">
+                                    @if (merchant.status !== 'Approved') {
+                                    <button class="action-btn action-btn--restore" title="Approve merchant"
+                                        [disabled]="isUpdating(merchant.id)"
+                                        (click)="approve(merchant)">
+                                        @if (isUpdating(merchant.id)) {
+                                        <i class="lni lni-spinner-solid animate-spin" style="font-size:11px;"></i>
+                                        } @else {
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                        }
+                                        Approve
+                                    </button>
+                                    }
+                                    @if (merchant.status !== 'Rejected') {
+                                    <button class="action-btn action-btn--delete" title="Reject merchant"
+                                        [disabled]="isUpdating(merchant.id)"
+                                        (click)="reject(merchant)">
+                                        @if (isUpdating(merchant.id)) {
+                                        <i class="lni lni-spinner-solid animate-spin" style="font-size:11px;"></i>
+                                        } @else {
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="18" y1="6" x2="6" y2="18" />
+                                            <line x1="6" y1="6" x2="18" y2="18" />
+                                        </svg>
+                                        }
+                                        Reject
+                                    </button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Mobile cards -->
+                <ul class="sm:hidden divide-y dark:divide-neutral-700">
+                    @for (merchant of filtered(); track merchant.id) {
+                    <li class="p-4 space-y-3">
+                        <div class="flex items-center gap-3">
+                            @if (merchant.storeLogo) {
+                            <img [src]="merchant.storeLogo" [alt]="merchant.storeName"
+                                class="w-10 h-10 rounded-xl object-cover" />
+                            } @else {
+                            <div class="avatar-circle">{{ merchant.storeName[0] }}</div>
+                            }
+                            <div>
+                                <p class="font-semibold text-neutral-800 dark:text-neutral-100">
+                                    {{ merchant.storeName }}
+                                </p>
+                                <p class="text-xs text-neutral-400">{{ merchant.createdAt | date:'mediumDate' }}</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                            [class.status-active]="merchant.status === 'Approved'"
+                            [class.bg-yellow-100]="merchant.status === 'Pending'"
+                            [class.text-yellow-700]="merchant.status === 'Pending'"
+                            [class.bg-red-100]="merchant.status === 'Rejected'"
+                            [class.text-red-600]="merchant.status === 'Rejected'">
+                            {{ merchant.status }}
+                        </span>
+                        <div class="table-actions">
+                            @if (merchant.status !== 'Approved') {
+                            <button class="action-btn action-btn--restore" [disabled]="isUpdating(merchant.id)"
+                                (click)="approve(merchant)">
+                                Approve
+                            </button>
+                            }
+                            @if (merchant.status !== 'Rejected') {
+                            <button class="action-btn action-btn--delete" [disabled]="isUpdating(merchant.id)"
+                                (click)="reject(merchant)">
+                                Reject
+                            </button>
+                            }
+                        </div>
+                    </li>
+                    }
+                </ul>
+            </div>
+            }
+            }
+        </div>
+    </div>
+</div>
