@@ -9,29 +9,10 @@
     <div class="section-card">
         <div class="p-5 sm:p-6 space-y-4">
 
-            <!-- Status filter tabs -->
-            <div class="flex flex-wrap gap-2">
-                <button class="tab-btn" [class.tab-btn--active]="statusFilter() === 'All'"
-                    (click)="setFilter('All')">
-                    All
-                    <span class="ml-1.5 text-xs font-bold opacity-70">({{ counts().all }})</span>
-                </button>
-                <button class="tab-btn" [class.tab-btn--active]="statusFilter() === 'Pending'"
-                    (click)="setFilter('Pending')">
-                    Pending
-                    <span class="ml-1.5 text-xs font-bold opacity-70">({{ counts().pending }})</span>
-                </button>
-                <button class="tab-btn" [class.tab-btn--active]="statusFilter() === 'Approved'"
-                    (click)="setFilter('Approved')">
-                    Approved
-                    <span class="ml-1.5 text-xs font-bold opacity-70">({{ counts().approved }})</span>
-                </button>
-                <button class="tab-btn" [class.tab-btn--active]="statusFilter() === 'Rejected'"
-                    (click)="setFilter('Rejected')">
-                    Rejected
-                    <span class="ml-1.5 text-xs font-bold opacity-70">({{ counts().rejected }})</span>
-                </button>
-            </div>
+            <app-tab-switcher
+                [tabs]="tabs()"
+                [activeTab]="statusFilter()"
+                (tabChange)="setFilter($event)" />
 
             @if (loading()) {
             <div class="py-24 flex items-center justify-center">
@@ -91,39 +72,26 @@
                                 </span>
                             </td>
                             <td class="px-4 py-3">
-                                <div class="table-actions">
+                                <div class="flex items-center gap-2">
                                     @if (merchant.status !== 'Approved') {
-                                    <button class="action-btn action-btn--restore" title="Approve merchant"
-                                        [disabled]="isUpdating(merchant.id)"
+                                    <app-button
+                                        variant="primary"
+                                        size="sm"
+                                        [loading]="isUpdating(merchant.id)"
+                                        loadingText="Approving…"
                                         (click)="approve(merchant)">
-                                        @if (isUpdating(merchant.id)) {
-                                        <i class="lni lni-spinner-solid animate-spin" style="font-size:11px;"></i>
-                                        } @else {
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                                            stroke-linecap="round" stroke-linejoin="round">
-                                            <polyline points="20 6 9 17 4 12" />
-                                        </svg>
-                                        }
                                         Approve
-                                    </button>
+                                    </app-button>
                                     }
                                     @if (merchant.status !== 'Rejected') {
-                                    <button class="action-btn action-btn--delete" title="Reject merchant"
-                                        [disabled]="isUpdating(merchant.id)"
+                                    <app-button
+                                        variant="danger"
+                                        size="sm"
+                                        [loading]="isUpdating(merchant.id)"
+                                        loadingText="Rejecting…"
                                         (click)="reject(merchant)">
-                                        @if (isUpdating(merchant.id)) {
-                                        <i class="lni lni-spinner-solid animate-spin" style="font-size:11px;"></i>
-                                        } @else {
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                                            stroke-linecap="round" stroke-linejoin="round">
-                                            <line x1="18" y1="6" x2="6" y2="18" />
-                                            <line x1="6" y1="6" x2="18" y2="18" />
-                                        </svg>
-                                        }
                                         Reject
-                                    </button>
+                                    </app-button>
                                     }
                                 </div>
                             </td>
@@ -158,18 +126,26 @@
                             [class.text-red-600]="merchant.status === 'Rejected'">
                             {{ merchant.status }}
                         </span>
-                        <div class="table-actions">
+                        <div class="flex gap-2">
                             @if (merchant.status !== 'Approved') {
-                            <button class="action-btn action-btn--restore" [disabled]="isUpdating(merchant.id)"
+                            <app-button
+                                variant="primary"
+                                size="sm"
+                                [loading]="isUpdating(merchant.id)"
+                                loadingText="Approving…"
                                 (click)="approve(merchant)">
                                 Approve
-                            </button>
+                            </app-button>
                             }
                             @if (merchant.status !== 'Rejected') {
-                            <button class="action-btn action-btn--delete" [disabled]="isUpdating(merchant.id)"
+                            <app-button
+                                variant="danger"
+                                size="sm"
+                                [loading]="isUpdating(merchant.id)"
+                                loadingText="Rejecting…"
                                 (click)="reject(merchant)">
                                 Reject
-                            </button>
+                            </app-button>
                             }
                         </div>
                     </li>

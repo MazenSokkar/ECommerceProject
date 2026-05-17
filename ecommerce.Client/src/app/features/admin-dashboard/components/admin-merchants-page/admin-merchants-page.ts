@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ToastService } from '../../../../core/services/toast.service';
+import { Button } from '../../../../shared/components/button/button';
+import { Tab, TabSwitcher } from '../../../../shared/components/tab-switcher/tab-switcher';
 import { AdminMerchantsApiService } from '../../services/admin-merchants-api.service';
 import { Merchant, MerchantStatus } from '../../models/merchant.model';
 
@@ -9,7 +11,7 @@ type StatusFilter = 'All' | MerchantStatus;
 @Component({
   selector: 'app-admin-merchants-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, Button, TabSwitcher],
   templateUrl: './admin-merchants-page.html',
 })
 export class AdminMerchantsPage implements OnInit {
@@ -37,12 +39,22 @@ export class AdminMerchantsPage implements OnInit {
     };
   });
 
+  protected readonly tabs = computed<Tab[]>(() => {
+    const c = this.counts();
+    return [
+      { value: 'All', label: `All (${c.all})` },
+      { value: 'Pending', label: `Pending (${c.pending})` },
+      { value: 'Approved', label: `Approved (${c.approved})` },
+      { value: 'Rejected', label: `Rejected (${c.rejected})` },
+    ];
+  });
+
   ngOnInit(): void {
     this.load();
   }
 
-  protected setFilter(filter: StatusFilter): void {
-    this.statusFilter.set(filter);
+  protected setFilter(filter: string): void {
+    this.statusFilter.set(filter as StatusFilter);
   }
 
   protected approve(merchant: Merchant): void {
